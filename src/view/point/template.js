@@ -6,7 +6,7 @@ import { formatDate, formatDuration } from '../../utils';
  * @returns {String} template
  */
 const template = (point) => {
-  const {dateFrom, dateTo, destination, bestPrice, isFavorite} = point;
+  const {type, dateFrom, dateTo, destination, bestPrice, isFavorite} = point;
 
   const favoriteClass = isFavorite ? 'event__favorite-btn--active' : '';
   const eventDateFull = formatDate(dateFrom, 'YYYY-MM-DD');
@@ -25,7 +25,7 @@ const template = (point) => {
         <img class="event__type-icon" width="42" height="42" src="img/icons/check-in.png"
           alt="Event type icon">
       </div>
-      <h3 class="event__title">${destination.name}</h3>
+      <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${eventStartTimeFull}">${eventStartTime}</time>
