@@ -8,6 +8,7 @@ export default class Offer {
     this.id = String(data['id']);
     this.title = data['title'];
     this.price = Number(data['price']);
+    this.type = data['type'];
   }
 
   /**
