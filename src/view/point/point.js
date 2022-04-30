@@ -1,7 +1,7 @@
 import AbstractView from '../abstract-view/abstract-view';
 import { template } from './template';
 
-export default class EventListView extends AbstractView {
+export default class PointView extends AbstractView {
 
   /**
    * Returns view's html template

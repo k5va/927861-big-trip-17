@@ -1,11 +1,11 @@
 import { render } from '../../render';
-import { EditEventView, EventListView, EventView, SortView } from '../../view';
+import { EditPointView, PointListView, PointView, SortView } from '../../view';
 
 const NUMBER_OF_EVENTS = 3;
 
 export default class EventsPresenter {
   _sortView = new SortView();
-  _eventListView = new EventListView();
+  _pointListView = new PointListView();
 
   /**
    * renders events components
@@ -15,10 +15,10 @@ export default class EventsPresenter {
     this._container = container;
 
     render(this._sortView, this._container);
-    render(this._eventListView, this._container);
-    render(new EditEventView(), this._eventListView.getElement());
+    render(this._pointListView, this._container);
+    render(new EditPointView(), this._pointListView.getElement());
     for (let i = 0; i < NUMBER_OF_EVENTS; i++) {
-      render(new EventView(), this._eventListView.getElement());
+      render(new PointView(), this._pointListView.getElement());
     }
   }
 }
