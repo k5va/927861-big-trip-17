@@ -1,4 +1,4 @@
-import { formatDate } from "../../utils";
+import { formatDate, formatDuration } from '../../utils';
 
 /**
  * Creates event template
@@ -15,7 +15,7 @@ const template = (point) => {
   const eventStartTime = formatDate(dateFrom, 'HH:mm');
   const eventEndTimeFull = formatDate(dateTo, 'YYYY-MM-DDTHH:mm');
   const eventEndTime = formatDate(dateTo, 'HH:mm');
-
+  const duration = formatDuration(dateFrom, dateTo);
 
   return `
   <li class="trip-events__item">
@@ -32,7 +32,7 @@ const template = (point) => {
           &mdash;
           <time class="event__end-time" datetime="${eventEndTimeFull}">${eventEndTime}</time>
         </p>
-        <p class="event__duration">40M</p>
+        <p class="event__duration">${duration}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${bestPrice}</span>
