@@ -7,7 +7,7 @@ export default class Offer {
   constructor(data) {
     this.id = String(data['id']);
     this.title = data['title'];
-    this.price = +data['price'];
+    this.price = Number(data['price']);
   }
 
   /**
