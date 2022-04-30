@@ -1,4 +1,4 @@
-const generateOffers = () => `
+const generateOffers = () => JSON.parse(`
 [
   {
       "type": "taxi",
@@ -205,6 +205,6 @@ const generateOffers = () => `
       ]
   }
 ]
-`;
+`);
 
 export {generateOffers};

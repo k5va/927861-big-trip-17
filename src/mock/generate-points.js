@@ -1,4 +1,4 @@
-const generatePoints = () => `
+const generatePoints = () => JSON.parse(`
 [
   {
       "id": "0",
@@ -1069,6 +1069,6 @@ const generatePoints = () => `
       ]
   }
 ]
-`;
+`);
 
-export {generateOffers};
+export {generatePoints};

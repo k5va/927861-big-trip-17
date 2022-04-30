@@ -1,4 +1,4 @@
-const generateDestinations = () => `
+const generateDestinations = () => JSON.parse(`
 [
   {
       "name": "Chamonix",
@@ -801,6 +801,6 @@ const generateDestinations = () => `
       ]
   }
 ]
-`;
+`);
 
 export {generateDestinations};
