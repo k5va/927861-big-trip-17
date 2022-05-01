@@ -6,10 +6,13 @@ export default class PointView extends AbstractView {
   /**
    * Creates an instance of point view
    * @param {Point} point - point
+   * @param {Array<Offer>} - offers
    */
-  constructor(point) {
+  constructor(point, offers) {
     super();
+
     this._point = point;
+    this._offers = offers;
   }
 
   /**
@@ -17,6 +20,6 @@ export default class PointView extends AbstractView {
    * @returns {String} - view's template
    */
   getTemplate() {
-    return template(this._point);
+    return template(this._point, this._offers);
   }
 }

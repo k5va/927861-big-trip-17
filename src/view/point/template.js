@@ -3,9 +3,10 @@ import { formatDate, formatDuration } from '../../utils';
 /**
  * Creates event template
  * @param {Point} point - point
+ * @param {Array<Offer>} offers - offers
  * @returns {String} template
  */
-const template = (point) => {
+const template = (point, offers) => {
   const {type, dateFrom, dateTo, destination, bestPrice, isFavorite} = point;
 
   const favoriteClass = isFavorite ? 'event__favorite-btn--active' : '';
@@ -16,6 +17,14 @@ const template = (point) => {
   const eventEndTimeFull = formatDate(dateTo, 'YYYY-MM-DDTHH:mm');
   const eventEndTime = formatDate(dateTo, 'HH:mm');
   const duration = formatDuration(dateFrom, dateTo);
+
+  const offersList = offers.map(({title, price}) => `
+    <li class="event__offer">
+      <span class="event__offer-title">${title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${price}</span>
+    </li>
+  `).join('');
 
   return `
   <li class="trip-events__item">
@@ -38,13 +47,7 @@ const template = (point) => {
         &euro;&nbsp;<span class="event__price-value">${bestPrice}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Add breakfast</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">50</span>
-        </li>
-      </ul>
+      <ul class="event__selected-offers">${offersList}</ul>
       <button class="event__favorite-btn ${favoriteClass}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
