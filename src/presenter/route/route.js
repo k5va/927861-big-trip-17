@@ -18,7 +18,11 @@ export default class RoutePresenter {
 
     render(this._sortView, this._container);
     render(this._pointListView, this._container);
-    render(new EditPointView(), this._pointListView.getElement());
+    render(
+      new EditPointView(
+        this._routeModel.points[0], this._offersModel.getOffers(this._routeModel.points[0].type)
+      ), this._pointListView.getElement()
+    );
 
     this._routeModel.points.forEach(
       (point) => render(
