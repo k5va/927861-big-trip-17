@@ -38,6 +38,26 @@ const createOffersTemplate = (selectedIds, offers) => offers.map(({id, title, pr
   `).join('');
 
 /**
+ * Creates destination pictures template string
+ * @param {Array<Object>} pictures - array of destination pictures
+ * @returns {String} template string
+ */
+const createDestinationPicturesTemplate = (pictures) => {
+  if (!pictures.length) {
+    return '';
+  }
+
+  return `
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${pictures.map(({src, description}) => `
+          <img class="event__photo" src="${src}" alt="${description}">
+        `).join('')}
+      </div>
+    </div>`;
+};
+
+/**
  * Creates edit event template
  * @param {Point} point - point data
  * @param {Array<Offer>} offers - offers
@@ -114,6 +134,7 @@ const template = (point, offers) => {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${destination.description}</p>
+          ${createDestinationPicturesTemplate(destination.pictures)}
         </section>
       </section>
     </form>
