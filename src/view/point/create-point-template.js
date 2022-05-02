@@ -6,7 +6,7 @@ import { formatDate, formatDuration } from '../../utils';
  * @param {Array<Offer>} offers - offers
  * @returns {String} template
  */
-const template = (point, offers) => {
+const createPointTemplate = (point, offers) => {
   const {type, dateFrom, dateTo, destination, bestPrice, isFavorite} = point;
 
   const favoriteClass = isFavorite ? 'event__favorite-btn--active' : '';
@@ -61,4 +61,4 @@ const template = (point, offers) => {
   </li>`;
 };
 
-export {template};
+export {createPointTemplate};

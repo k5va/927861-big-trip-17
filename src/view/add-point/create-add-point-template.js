@@ -2,7 +2,7 @@
  * Creates add event template
  * @returns {String} template
  */
-const template = () =>
+const createAddPointTemplate = () =>
   `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -196,4 +196,4 @@ const template = () =>
     </form>
   </li>`;
 
-export {template};
+export {createAddPointTemplate};

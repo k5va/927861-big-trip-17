@@ -1,5 +1,5 @@
 import AbstractView from '../abstract-view/abstract-view';
-import { template } from './template';
+import { createEditPointTemplate } from './create-edit-point-template';
 
 export default class EditPointView extends AbstractView {
 
@@ -22,6 +22,6 @@ export default class EditPointView extends AbstractView {
    * @returns {String} - view's template
    */
   getTemplate() {
-    return template(this._point, this._offers, this._destinations);
+    return createEditPointTemplate(this._point, this._offers, this._destinations);
   }
 }

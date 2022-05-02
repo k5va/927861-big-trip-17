@@ -1,69 +1,8 @@
 import { formatDate } from '../../utils';
-import { PointType } from '../../const';
-
-/**
- * Creates point types template string
- * @param {String} currentType - current type
- * @returns {String} template string
- */
-const createPointTypesTemplate = (currentType) => Object.values(PointType).map((type) => {
-  const formattedType = type.toLowerCase();
-  return `
-    <div class="event__type-item">
-      <input id="event-type-${formattedType}-1" class="event__type-input  visually-hidden"
-        type="radio" name="event-type" value="${formattedType}"
-        ${formattedType === currentType ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${formattedType}"
-        for="event-type-${formattedType}-1">${type}</label>
-    </div>`;
-}).join('');
-
-/**
- * Creates offers list template string
- * @param {Array<String>} selectedIds - array of selected offers' ids
- * @param {Array<Offer>} offers - array of available offers
- * @returns {String} template string
- */
-const createOffersTemplate = (selectedIds, offers) => offers.map(({id, title, price}) => `
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}"
-        type="checkbox" name="event-offer-${id}"
-        ${selectedIds.some((selectedId) => selectedId === id) ? 'checked' : ''}>
-      <label class="event__offer-label" for="event-offer-${id}">
-        <span class="event__offer-title">${title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-      </label>
-    </div>
-  `).join('');
-
-/**
- * Creates destination pictures template string
- * @param {Array<Object>} pictures - array of destination pictures
- * @returns {String} template string
- */
-const createDestinationPicturesTemplate = (pictures) => {
-  if (!pictures.length) {
-    return '';
-  }
-
-  return `
-    <div class="event__photos-container">
-      <div class="event__photos-tape">
-        ${pictures.map(({src, description}) => `
-          <img class="event__photo" src="${src}" alt="${description}">
-        `).join('')}
-      </div>
-    </div>`;
-};
-
-/**
- * Creates destinations list template
- * @param {Array<Destination>} destinations - array of available destinations
- * @returns {String} template
- */
-const createDestinationsTemplate = (destinations) =>
-  destinations.map(({name}) => `<option value="${name}"></option>`).join('');
+import { createPointTypesTemplate } from './create-point-types-template';
+import { createOffersTemplate } from './create-offers-template';
+import { createPicturesTemplate } from './create-pictures-template';
+import { createDestinationsTemplate } from './create-destinations-template';
 
 /**
  * Creates edit event template
@@ -72,7 +11,7 @@ const createDestinationsTemplate = (destinations) =>
  * @param {Array<Destination>} destinations - available destinations
  * @returns {String} template
  */
-const template = (point, offers, destinations) => {
+const createEditPointTemplate = (point, offers, destinations) => {
   const {type, dateFrom, dateTo, destination, bestPrice} = point;
 
   const eventStartTime = formatDate(dateFrom, 'DD/MM/YY HH:mm');
@@ -141,7 +80,7 @@ const template = (point, offers, destinations) => {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${destination.description}</p>
-          ${createDestinationPicturesTemplate(destination.pictures)}
+          ${createPicturesTemplate(destination.pictures)}
         </section>
       </section>
     </form>
@@ -149,4 +88,4 @@ const template = (point, offers, destinations) => {
 
 };
 
-export {template};
+export {createEditPointTemplate};

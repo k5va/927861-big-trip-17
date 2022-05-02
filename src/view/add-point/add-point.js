@@ -1,5 +1,5 @@
 import AbstractView from '../abstract-view/abstract-view';
-import { template } from './template';
+import { createAddPointTemplate } from './create-add-point-template';
 
 export default class AddPointView extends AbstractView {
 
@@ -8,6 +8,6 @@ export default class AddPointView extends AbstractView {
    * @returns {String} - view's template
    */
   getTemplate() {
-    return template();
+    return createAddPointTemplate();
   }
 }

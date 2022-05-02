@@ -1,5 +1,5 @@
 import AbstractView from '../abstract-view/abstract-view';
-import { template } from './template';
+import { createFiltersTemplate } from './create-filters-template';
 
 export default class FiltersView extends AbstractView {
 
@@ -8,6 +8,6 @@ export default class FiltersView extends AbstractView {
    * @returns {String} - view's template
    */
   getTemplate() {
-    return template();
+    return createFiltersTemplate();
   }
 }
