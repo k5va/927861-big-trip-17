@@ -4,6 +4,7 @@ import { render } from './render';
 import { AddPointButtonView, FiltersView } from './view';
 import { generatePoints } from './mock/generate-points';
 import { generateOffers } from './mock/generate-offers';
+import { generateDestinations } from './mock/generate-destinations';
 
 const tripContainer = document.querySelector('.trip-main');
 const routeContainer = document.querySelector('.trip-events');
@@ -12,10 +13,11 @@ const addPointButtonView = new AddPointButtonView();
 const routePresenter = new RoutePresenter();
 const routeModel = new Route();
 const offersModel = Offers.parse(generateOffers());
+const destinations = generateDestinations();
 
 routeModel.points = Point.parseAll(generatePoints()); // TODO: make same as offers parse
 
 render(filtersView, tripContainer);
 render(addPointButtonView, tripContainer);
 
-routePresenter.init(routeContainer, routeModel, offersModel);
+routePresenter.init(routeContainer, routeModel, offersModel, destinations);

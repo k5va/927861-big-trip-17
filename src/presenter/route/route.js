@@ -9,19 +9,23 @@ export default class RoutePresenter {
    * renders events components
    * @param {Route} routeModel - route data
    * @param {Offers} offersModel - offers data
+   * @param {Array<Destinations>} destinations - avaliable destinations
    * @param {HTMLElement} container
    */
-  init(container, routeModel, offersModel) {
+  init(container, routeModel, offersModel, destinations) {
     this._container = container;
     this._routeModel = routeModel;
     this._offersModel = offersModel;
+    this._destinations = destinations;
 
     render(this._sortView, this._container);
     render(this._pointListView, this._container);
     render(
       new EditPointView(
-        this._routeModel.points[0], this._offersModel.getOffers(this._routeModel.points[0].type)
-      ), this._pointListView.getElement()
+        this._routeModel.points[0],
+        this._offersModel.getOffers(this._routeModel.points[0].type),
+        this._destinations),
+      this._pointListView.getElement()
     );
 
     this._routeModel.points.forEach(

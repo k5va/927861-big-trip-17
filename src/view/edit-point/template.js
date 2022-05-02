@@ -6,7 +6,7 @@ import { PointType } from '../../const';
  * @param {String} currentType - current type
  * @returns {String} template string
  */
-const createPointTypeList = (currentType) => Object.values(PointType).map((type) => {
+const createPointTypesTemplate = (currentType) => Object.values(PointType).map((type) => {
   const formattedType = type.toLowerCase();
   return `
     <div class="event__type-item">
@@ -58,12 +58,21 @@ const createDestinationPicturesTemplate = (pictures) => {
 };
 
 /**
- * Creates edit event template
- * @param {Point} point - point data
- * @param {Array<Offer>} offers - offers
+ * Creates destinations list template
+ * @param {Array<Destination>} destinations - array of available destinations
  * @returns {String} template
  */
-const template = (point, offers) => {
+const createDestinationsTemplate = (destinations) =>
+  destinations.map(({name}) => `<option value="${name}"></option>`).join('');
+
+/**
+ * Creates edit event template
+ * @param {Point} point - point data
+ * @param {Array<Offer>} offers - available offers
+ * @param {Array<Destination>} destinations - available destinations
+ * @returns {String} template
+ */
+const template = (point, offers, destinations) => {
   const {type, dateFrom, dateTo, destination, bestPrice} = point;
 
   const eventStartTime = formatDate(dateFrom, 'DD/MM/YY HH:mm');
@@ -83,7 +92,7 @@ const template = (point, offers) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createPointTypeList(type)}
+              ${createPointTypesTemplate(type)}
             </fieldset>
           </div>
         </div>
@@ -93,9 +102,7 @@ const template = (point, offers) => {
           <input class="event__input  event__input--destination" id="event-destination-1"
             type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+          ${createDestinationsTemplate(destinations)}
           </datalist>
         </div>
 
