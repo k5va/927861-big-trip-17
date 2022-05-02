@@ -1,14 +1,23 @@
-import { EventsPresenter } from './presenter';
+import { Route, Point, Offers } from './model';
+import { RoutePresenter } from './presenter';
 import { render } from './render';
-import { AddEventButtonView, FiltersView } from './view';
+import { AddPointButtonView, FiltersView } from './view';
+import { generatePoints } from './mock/generate-points';
+import { generateOffers } from './mock/generate-offers';
+import { generateDestinations } from './mock/generate-destinations';
 
 const tripContainer = document.querySelector('.trip-main');
-const eventsContainer = document.querySelector('.trip-events');
+const routeContainer = document.querySelector('.trip-events');
 const filtersView = new FiltersView();
-const addEventButtonView = new AddEventButtonView();
-const eventsPresenter = new EventsPresenter();
+const addPointButtonView = new AddPointButtonView();
+const routePresenter = new RoutePresenter();
+const routeModel = new Route();
+const offersModel = Offers.parse(generateOffers());
+const destinations = generateDestinations();
+
+routeModel.points = Point.parseAll(generatePoints()); // TODO: make same as offers parse
 
 render(filtersView, tripContainer);
-render(addEventButtonView, tripContainer);
+render(addPointButtonView, tripContainer);
 
-eventsPresenter.init(eventsContainer);
+routePresenter.init(routeContainer, routeModel, offersModel, destinations);

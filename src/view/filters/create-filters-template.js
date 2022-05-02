@@ -2,7 +2,7 @@
  * Creates filters template
  * @returns {String} template
  */
-const template = () =>
+const createFiltersTemplate = () =>
   `<div class="trip-main__trip-controls  trip-controls">
     <div class="trip-controls__filters">
       <h2 class="visually-hidden">Filter events</h2>
@@ -31,4 +31,4 @@ const template = () =>
   </div>
 `;
 
-export {template};
+export {createFiltersTemplate};
