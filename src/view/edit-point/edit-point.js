@@ -8,6 +8,7 @@ export default class EditPointView extends AbstractView {
   #saveHandler = null;
   #closeHandler = null;
   #formElement = null;
+  #closeButtonElement = null;
 
   /**
    * Creates an instance of view
@@ -23,6 +24,7 @@ export default class EditPointView extends AbstractView {
     this.#destinations = destinations;
 
     this.#formElement = this.getElement().querySelector('.event--edit');
+    this.#closeButtonElement = this.getElement().querySelector('.event__rollup-btn');
   }
 
   /**
@@ -41,4 +43,37 @@ export default class EditPointView extends AbstractView {
     this.#saveHandler = handler;
     this.#formElement.addEventListener('submit', this.#saveHandler);
   }
+
+  /**
+   * Sets close handler
+   * @param {Function} handler - handler
+   */
+  setCloseHandler(handler) {
+    this.#closeHandler = handler;
+    this.#closeButtonElement.addEventListener('click', this.#closeHandler);
+  }
+
+  /**
+   * Activates view (when is visible to user)
+   */
+  activate() {
+    document.addEventListener('keydown', this.#keydownHandler);
+  }
+
+  /**
+   * Deactivates view (when is not visible to user)
+   */
+  deactivate() {
+    document.removeEventListener('keydown', this.#keydownHandler);
+  }
+
+  /**
+   * Handler for document key down event
+   * @param {KeyboardEvent} evt - event object
+   */
+  #keydownHandler = (evt) => {
+    if (evt.key === 'Esc' || evt.key === 'Escape') {
+      this.#closeHandler();
+    }
+  };
 }
