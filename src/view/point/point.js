@@ -10,7 +10,7 @@ export default class PointView extends AbstractView {
   /**
    * Creates an instance of point view
    * @param {Point} point - point
-   * @param {Array<Offer>} - offers
+   * @param {Array<Offer>} offers - offers
    */
   constructor(point, offers) {
     super();

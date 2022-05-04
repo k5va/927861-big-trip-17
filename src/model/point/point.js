@@ -1,5 +1,3 @@
-import {Destination} from '../../model';
-
 export default class Point {
 
   /**
@@ -14,7 +12,7 @@ export default class Point {
     this.bestPrice = Number(data['base_price']);
     this.isFavorite = Boolean(data['is_favorite']);
     this.offers = data['offers'] ? data['offers'].map((offer) => String(offer['id'])) : [];
-    this.destination = Destination.parse(data['destination']);
+    this.destination = data['destination']['name'];
   }
 
   /**

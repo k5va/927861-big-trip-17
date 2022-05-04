@@ -15,7 +15,6 @@ const offersModel = Offers.parse(generateOffers());
 const destinations = generateDestinations();
 const routePresenter = new RoutePresenter(routeContainer, routeModel, offersModel, destinations);
 
-
 routeModel.points = Point.parseAll(generatePoints()); // TODO: make same as offers parse
 
 render(filtersView, tripContainer);
