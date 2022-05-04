@@ -1,5 +1,7 @@
 import { render } from '../../render';
-import { EditPointView, PointListView, PointView, SortView } from '../../view';
+import { EditPointView, NoPointsView, PointListView, PointView, SortView } from '../../view';
+import { Filter, NoPointsMessage } from '../../const';
+
 
 export default class RoutePresenter {
   #sortView = new SortView();
@@ -27,10 +29,13 @@ export default class RoutePresenter {
    * Renders points
    */
   init() {
-    render(this.#sortView, this.#container);
-    render(this.#pointListView, this.#container);
-
-    this.#routeModel.points.forEach((point) => this.#renderPoint(point));
+    if (this.#routeModel.points.length > 0) {
+      render(this.#sortView, this.#container);
+      render(this.#pointListView, this.#container);
+      this.#routeModel.points.forEach((point) => this.#renderPoint(point));
+    } else {
+      render(new NoPointsView(NoPointsMessage[Filter.EVERYTHING]), this.#container);
+    }
   }
 
   /**
