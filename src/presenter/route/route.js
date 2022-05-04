@@ -10,33 +10,41 @@ export default class RoutePresenter {
   #destinations = null;
 
   /**
-   * renders events components
+   * Creates new instance of presenter
    * @param {Route} routeModel - route data
    * @param {Offers} offersModel - offers data
    * @param {Array<Destinations>} destinations - avaliable destinations
    * @param {HTMLElement} container
    */
-  init(container, routeModel, offersModel, destinations) {
+  constructor(container, routeModel, offersModel, destinations) {
     this.#container = container;
     this.#routeModel = routeModel;
     this.#offersModel = offersModel;
     this.#destinations = destinations;
+  }
 
+  /**
+   * Renders points
+   */
+  init() {
     render(this.#sortView, this.#container);
     render(this.#pointListView, this.#container);
-    render(
-      new EditPointView(
-        this.#routeModel.points[0],
-        this.#offersModel.getOffers(this.#routeModel.points[0].type),
-        this.#destinations),
-      this.#pointListView.getElement()
+
+    this.#routeModel.points.forEach((point) => this.#renderPoint(point));
+  }
+
+  /**
+   * renders given point
+   * @param {Point} point - point data
+   */
+  #renderPoint(point) {
+    const pointView = new PointView(point, this.#offersModel.getOffers(point.type, point.offers));
+    const editPointView = new EditPointView(
+      point,
+      this.#offersModel.getOffers(point.type),
+      this.#destinations
     );
 
-    this.#routeModel.points.forEach(
-      (point) => render(
-        new PointView(point, this.#offersModel.getOffers(point.type, point.offers)),
-        this.#pointListView.getElement()
-      )
-    );
+    render(pointView, this.#pointListView.getElement());
   }
 }
