@@ -46,26 +46,41 @@ export default class RoutePresenter {
     );
 
     pointView.setEditHandler(() => {
-      this.#pointListView.getElement().replaceChild(
-        editPointView.getElement(), pointView.getElement()
-      );
-      editPointView.activate();
+      this.#replaceViewToEdit(pointView, editPointView);
     });
 
     editPointView.setSaveHandler(() => {
-      this.#pointListView.getElement().replaceChild(
-        pointView.getElement(), editPointView.getElement()
-      );
-      editPointView.deactivate();
+      this.#replaceEdittoView(pointView, editPointView);
     });
 
     editPointView.setCloseHandler(() => {
-      this.#pointListView.getElement().replaceChild(
-        pointView.getElement(), editPointView.getElement()
-      );
-      editPointView.deactivate();
+      this.#replaceEdittoView(pointView, editPointView);
     });
 
     render(pointView, this.#pointListView.getElement());
+  }
+
+  /**
+   * Replaces point view to edit view
+   * @param {PointView} pointView - point view
+   * @param {PointEditView} editPointView - point edit view
+   */
+  #replaceViewToEdit(pointView, editPointView) {
+    this.#pointListView.getElement().replaceChild(
+      editPointView.getElement(), pointView.getElement()
+    );
+    editPointView.activate();
+  }
+
+  /**
+   * Replaces edit point view to view
+   * @param {PointView} pointView - point view
+   * @param {PointEditView} editPointView - point edit view
+   */
+  #replaceEdittoView(pointView, editPointView) {
+    this.#pointListView.getElement().replaceChild(
+      pointView.getElement(), editPointView.getElement()
+    );
+    editPointView.deactivate();
   }
 }
