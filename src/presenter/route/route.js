@@ -51,6 +51,11 @@ export default class RoutePresenter {
       );
     });
 
+    editPointView.setSaveHandler(() => {
+      this.#pointListView.getElement().replaceChild(
+        pointView.getElement(), editPointView.getElement()
+      );
+    });
 
     render(pointView, this.#pointListView.getElement());
   }

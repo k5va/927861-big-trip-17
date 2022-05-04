@@ -5,6 +5,9 @@ export default class EditPointView extends AbstractView {
   #point = null;
   #offers = null;
   #destinations = null;
+  #saveHandler = null;
+  #closeHandler = null;
+  #formElement = null;
 
   /**
    * Creates an instance of view
@@ -18,6 +21,8 @@ export default class EditPointView extends AbstractView {
     this.#point = point;
     this.#offers = offers;
     this.#destinations = destinations;
+
+    this.#formElement = this.getElement().querySelector('.event--edit');
   }
 
   /**
@@ -26,5 +31,14 @@ export default class EditPointView extends AbstractView {
    */
   getTemplate() {
     return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
+  }
+
+  /**
+   * Sets save point handler
+   * @param {Function} handler - handler
+   */
+  setSaveHandler(handler) {
+    this.#saveHandler = handler;
+    this.#formElement.addEventListener('submit', this.#saveHandler);
   }
 }
