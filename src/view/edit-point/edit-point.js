@@ -2,6 +2,9 @@ import AbstractView from '../abstract-view/abstract-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 
 export default class EditPointView extends AbstractView {
+  #point = null;
+  #offers = null;
+  #destinations = null;
 
   /**
    * Creates an instance of view
@@ -12,9 +15,9 @@ export default class EditPointView extends AbstractView {
   constructor(point, offers, destinations) {
     super();
 
-    this._point = point;
-    this._offers = offers;
-    this._destinations = destinations;
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
   /**
@@ -22,6 +25,6 @@ export default class EditPointView extends AbstractView {
    * @returns {String} - view's template
    */
   getTemplate() {
-    return createEditPointTemplate(this._point, this._offers, this._destinations);
+    return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
   }
 }

@@ -2,8 +2,12 @@ import { render } from '../../render';
 import { EditPointView, PointListView, PointView, SortView } from '../../view';
 
 export default class RoutePresenter {
-  _sortView = new SortView();
-  _pointListView = new PointListView();
+  #sortView = new SortView();
+  #pointListView = new PointListView();
+  #container = null;
+  #routeModel = null;
+  #offersModel = null;
+  #destinations = null;
 
   /**
    * renders events components
@@ -13,25 +17,25 @@ export default class RoutePresenter {
    * @param {HTMLElement} container
    */
   init(container, routeModel, offersModel, destinations) {
-    this._container = container;
-    this._routeModel = routeModel;
-    this._offersModel = offersModel;
-    this._destinations = destinations;
+    this.#container = container;
+    this.#routeModel = routeModel;
+    this.#offersModel = offersModel;
+    this.#destinations = destinations;
 
-    render(this._sortView, this._container);
-    render(this._pointListView, this._container);
+    render(this.#sortView, this.#container);
+    render(this.#pointListView, this.#container);
     render(
       new EditPointView(
-        this._routeModel.points[0],
-        this._offersModel.getOffers(this._routeModel.points[0].type),
-        this._destinations),
-      this._pointListView.getElement()
+        this.#routeModel.points[0],
+        this.#offersModel.getOffers(this.#routeModel.points[0].type),
+        this.#destinations),
+      this.#pointListView.getElement()
     );
 
-    this._routeModel.points.forEach(
+    this.#routeModel.points.forEach(
       (point) => render(
-        new PointView(point, this._offersModel.getOffers(point.type, point.offers)),
-        this._pointListView.getElement()
+        new PointView(point, this.#offersModel.getOffers(point.type, point.offers)),
+        this.#pointListView.getElement()
       )
     );
   }

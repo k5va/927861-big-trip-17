@@ -2,6 +2,8 @@ import AbstractView from '../abstract-view/abstract-view';
 import { createPointTemplate } from './create-point-template';
 
 export default class PointView extends AbstractView {
+  #point = null;
+  #offers = null;
 
   /**
    * Creates an instance of point view
@@ -11,8 +13,8 @@ export default class PointView extends AbstractView {
   constructor(point, offers) {
     super();
 
-    this._point = point;
-    this._offers = offers;
+    this.#point = point;
+    this.#offers = offers;
   }
 
   /**
@@ -20,6 +22,6 @@ export default class PointView extends AbstractView {
    * @returns {String} - view's template
    */
   getTemplate() {
-    return createPointTemplate(this._point, this._offers);
+    return createPointTemplate(this.#point, this.#offers);
   }
 }
