@@ -1,7 +1,7 @@
 import { Offer } from '../../model';
 
 export default class Offers {
-  _offers = {};
+  #offers = {};
 
   /**
    * Returns offers of given type
@@ -10,7 +10,7 @@ export default class Offers {
    * @returns {Array<Offer>} - array of offers
    */
   getOffers(type, ids) {
-    const typeOffers = this._offers[type] ? [...this._offers[type]] : [];
+    const typeOffers = this.#offers[type] ? [...this.#offers[type]] : [];
     if (ids) {
       return typeOffers.filter((offer) => ids.some((id) => id === offer.id));
     }
@@ -24,7 +24,7 @@ export default class Offers {
    * @param {Array<Offer>} offers - array of offers
    */
   setOffers(type, offers) {
-    this._offers[type] = [...offers];
+    this.#offers[type] = [...offers];
   }
 
   /**

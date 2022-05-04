@@ -1,12 +1,12 @@
 export default class Route {
-  _points = [];
+  #points = [];
 
   /**
    * points getter
    * @returns {Array<Point>} - array of points
    */
   get points() {
-    return [...this._points];
+    return [...this.#points];
   }
 
   /**
@@ -14,6 +14,6 @@ export default class Route {
    * @param {Array<Point>} points - array of points
    */
   set points(points) {
-    this._points = [...points];
+    this.#points = [...points];
   }
 }

@@ -1,7 +1,7 @@
 import { createElement } from '../../render';
 
 export default class AbstractView {
-  _element = null;
+  #element = null;
 
   /**
    * View's constructor
@@ -26,17 +26,17 @@ export default class AbstractView {
    * @returns {Element} - view's html element
    */
   getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+    if (!this.#element) {
+      this.#element = createElement(this.getTemplate());
     }
 
-    return this._element;
+    return this.#element;
   }
 
   /**
    * Removes view's html element
    */
   removeElement() {
-    this._element = null;
+    this.#element = null;
   }
 }
