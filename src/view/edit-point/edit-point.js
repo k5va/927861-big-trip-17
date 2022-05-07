@@ -1,12 +1,10 @@
-import AbstractView from '../abstract-view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 
 export default class EditPointView extends AbstractView {
   #point = null;
   #offers = null;
   #destinations = null;
-  #saveHandler = null;
-  #closeHandler = null;
   #formElement = null;
   #closeButtonElement = null;
 
@@ -23,15 +21,15 @@ export default class EditPointView extends AbstractView {
     this.#offers = offers;
     this.#destinations = destinations;
 
-    this.#formElement = this.getElement().querySelector('.event--edit');
-    this.#closeButtonElement = this.getElement().querySelector('.event__rollup-btn');
+    this.#formElement = this.element.querySelector('.event--edit');
+    this.#closeButtonElement = this.element.querySelector('.event__rollup-btn');
   }
 
   /**
    * Returns view's html template
    * @returns {String} - view's template
    */
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
   }
 
@@ -40,18 +38,37 @@ export default class EditPointView extends AbstractView {
    * @param {Function} handler - handler
    */
   setSaveHandler(handler) {
-    this.#saveHandler = handler;
+    this._callback.save = handler;
     this.#formElement.addEventListener('submit', this.#saveHandler);
   }
+
+  /**
+   * Handler for edit point
+   * @param {Event} evt - event object
+   */
+  #saveHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.save();
+  };
 
   /**
    * Sets close handler
    * @param {Function} handler - handler
    */
   setCloseHandler(handler) {
-    this.#closeHandler = handler;
+    this._callback.close = handler;
     this.#closeButtonElement.addEventListener('click', this.#closeHandler);
   }
+
+  /**
+   * Handler for close
+   * @param {Event} evt - event object
+   */
+  #closeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.close();
+  };
+
 
   /**
    * Activates view (when is visible to user)
@@ -73,7 +90,7 @@ export default class EditPointView extends AbstractView {
    */
   #keydownHandler = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
-      this.#closeHandler();
+      this._callback.close();
     }
   };
 }
