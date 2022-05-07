@@ -4,7 +4,6 @@ import { createPointTemplate } from './create-point-template';
 export default class PointView extends AbstractView {
   #point = null;
   #offers = null;
-  #editHandler = null;
   #editButtonElement = null;
 
   /**
@@ -34,7 +33,16 @@ export default class PointView extends AbstractView {
    * @param {Function} handler - handler
    */
   setEditHandler(handler) {
-    this.#editHandler = handler;
+    this._callback.edit = handler;
     this.#editButtonElement.addEventListener('click', this.#editHandler);
   }
+
+  /**
+   * Handler for edit point
+   * @param {Event} evt - event object
+   */
+  #editHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.edit();
+  };
 }
