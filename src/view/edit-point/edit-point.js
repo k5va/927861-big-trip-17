@@ -1,4 +1,4 @@
-import AbstractView from '../abstract-view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 
 export default class EditPointView extends AbstractView {
@@ -23,15 +23,15 @@ export default class EditPointView extends AbstractView {
     this.#offers = offers;
     this.#destinations = destinations;
 
-    this.#formElement = this.getElement().querySelector('.event--edit');
-    this.#closeButtonElement = this.getElement().querySelector('.event__rollup-btn');
+    this.#formElement = this.element.querySelector('.event--edit');
+    this.#closeButtonElement = this.element.querySelector('.event__rollup-btn');
   }
 
   /**
    * Returns view's html template
    * @returns {String} - view's template
    */
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
   }
 

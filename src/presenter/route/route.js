@@ -1,4 +1,4 @@
-import { render } from '../../render';
+import { render } from '../../framework/render';
 import { EditPointView, NoPointsView, PointListView, PointView, SortView } from '../../view';
 import { Filter, NoPointsMessage } from '../../const';
 
@@ -62,7 +62,7 @@ export default class RoutePresenter {
       this.#replaceEdittoView(pointView, editPointView);
     });
 
-    render(pointView, this.#pointListView.getElement());
+    render(pointView, this.#pointListView.element);
   }
 
   /**
@@ -71,8 +71,8 @@ export default class RoutePresenter {
    * @param {PointEditView} editPointView - point edit view
    */
   #replaceViewToEdit(pointView, editPointView) {
-    this.#pointListView.getElement().replaceChild(
-      editPointView.getElement(), pointView.getElement()
+    this.#pointListView.element.replaceChild(
+      editPointView.element, pointView.element
     );
     editPointView.activate();
   }
@@ -83,8 +83,8 @@ export default class RoutePresenter {
    * @param {PointEditView} editPointView - point edit view
    */
   #replaceEdittoView(pointView, editPointView) {
-    this.#pointListView.getElement().replaceChild(
-      pointView.getElement(), editPointView.getElement()
+    this.#pointListView.element.replaceChild(
+      pointView.element, editPointView.element
     );
     editPointView.deactivate();
   }

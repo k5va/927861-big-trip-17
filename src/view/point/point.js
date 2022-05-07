@@ -1,4 +1,4 @@
-import AbstractView from '../abstract-view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view';
 import { createPointTemplate } from './create-point-template';
 
 export default class PointView extends AbstractView {
@@ -18,14 +18,14 @@ export default class PointView extends AbstractView {
     this.#point = point;
     this.#offers = offers;
 
-    this.#editButtonElement = this.getElement().querySelector('.event__rollup-btn');
+    this.#editButtonElement = this.element.querySelector('.event__rollup-btn');
   }
 
   /**
    * Returns view's html template
    * @returns {String} - view's template
    */
-  getTemplate() {
+  get template() {
     return createPointTemplate(this.#point, this.#offers);
   }
 

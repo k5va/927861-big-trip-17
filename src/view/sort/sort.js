@@ -1,13 +1,12 @@
-import AbstractView from '../abstract-view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view';
 import { template } from './template';
-
 
 export default class SortView extends AbstractView {
   /**
    * Returns view's html template
    * @returns {String} - view's template
    */
-  getTemplate() {
+  get template() {
     return template;
   }
 }
