@@ -5,8 +5,6 @@ export default class EditPointView extends AbstractView {
   #point = null;
   #offers = null;
   #destinations = null;
-  #saveHandler = null;
-  #closeHandler = null;
   #formElement = null;
   #closeButtonElement = null;
 
@@ -40,18 +38,37 @@ export default class EditPointView extends AbstractView {
    * @param {Function} handler - handler
    */
   setSaveHandler(handler) {
-    this.#saveHandler = handler;
+    this._callback.save = handler;
     this.#formElement.addEventListener('submit', this.#saveHandler);
   }
+
+  /**
+   * Handler for edit point
+   * @param {Event} evt - event object
+   */
+  #saveHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.save();
+  };
 
   /**
    * Sets close handler
    * @param {Function} handler - handler
    */
   setCloseHandler(handler) {
-    this.#closeHandler = handler;
+    this._callback.close = handler;
     this.#closeButtonElement.addEventListener('click', this.#closeHandler);
   }
+
+  /**
+   * Handler for close
+   * @param {Event} evt - event object
+   */
+  #closeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.close();
+  };
+
 
   /**
    * Activates view (when is visible to user)
@@ -73,7 +90,7 @@ export default class EditPointView extends AbstractView {
    */
   #keydownHandler = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
-      this.#closeHandler();
+      this._callback.close();
     }
   };
 }
