@@ -1,17 +1,19 @@
-import { Filter, DEFAULT_FILTER } from '../../const';
+import { Filter, DEFAULT_FILTER, DEFAULT_SORTING, Sorting } from '../../const';
 import Observable from '../../framework/observable';
-import { isCurrentPoint, isFuturePoint, isPastPoint } from '../../utils';
+import { isCurrentPoint, isFuturePoint, isPastPoint,
+  comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../../utils';
 
 export default class Route extends Observable {
   #points = [];
   #filter = DEFAULT_FILTER;
+  #sorting = DEFAULT_SORTING;
 
   /**
    * points getter
    * @returns {Array<Point>} - array of points
    */
   get points() {
-    return this.#filterPoints();
+    return this.#sortPoints(this.#filterPoints(this.#points));
   }
 
   /**
@@ -39,19 +41,55 @@ export default class Route extends Observable {
   }
 
   /**
+   * Sorting getter
+   */
+  get sorting() {
+    return this.#sorting;
+  }
+
+  /**
+   * Sorting setter
+   * @param {String} sorting - new sorting
+   */
+  set sorting(sorting) {
+    this.#sorting = sorting;
+    this._notify('sorting_change', this.#sorting);
+  }
+
+
+  /**
    * filters points
+   * @param {Array<Point>} points - points
    * @returns {Array<Point>} - points array
    */
-  #filterPoints() {
+  #filterPoints(points) {
     switch (this.#filter) {
       case Filter.EVERYTHING:
-        return [...this.#points];
+        return [...points];
       case Filter.FUTURE:
-        return this.#points.filter((point) => isFuturePoint(point) || isCurrentPoint(point));
+        return points.filter((point) => isFuturePoint(point) || isCurrentPoint(point));
       case Filter.PAST:
-        return this.#points.filter((point) => isPastPoint(point) || isCurrentPoint(point));
+        return points.filter((point) => isPastPoint(point) || isCurrentPoint(point));
       default:
         throw new Error('Unsupported filter');
+    }
+  }
+
+  /**
+   * Sorts points
+   * @param {Array<Point>} points - points
+   * @returns {Array<Point>} - points array
+   */
+  #sortPoints(points) {
+    switch (this.#sorting) {
+      case Sorting.DAY:
+        return [...points].sort(comparePointsByDay);
+      case Sorting.PRICE:
+        return [...points].sort(comparePointsByPrice);
+      case Sorting.TIME:
+        return [...points.sort(comparePointsByTime)];
+      default:
+        throw new Error('Unsupported sorting');
     }
   }
 }
