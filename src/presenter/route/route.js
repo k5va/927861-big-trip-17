@@ -55,11 +55,11 @@ export default class RoutePresenter {
     });
 
     editPointView.setSaveHandler(() => {
-      this.#replaceEdittoView(pointView, editPointView);
+      this.#replaceEditToView(pointView, editPointView);
     });
 
     editPointView.setCloseHandler(() => {
-      this.#replaceEdittoView(pointView, editPointView);
+      this.#replaceEditToView(pointView, editPointView);
     });
 
     render(pointView, this.#pointListView.element);
@@ -80,7 +80,7 @@ export default class RoutePresenter {
    * @param {PointView} pointView - point view
    * @param {PointEditView} editPointView - point edit view
    */
-  #replaceEdittoView(pointView, editPointView) {
+  #replaceEditToView(pointView, editPointView) {
     replace(pointView, editPointView);
     editPointView.deactivate();
   }

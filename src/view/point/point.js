@@ -43,6 +43,6 @@ export default class PointView extends AbstractView {
    */
   #editHandler = (evt) => {
     evt.preventDefault();
-    this._callback.edit();
+    this._callback.edit?.();
   };
 }

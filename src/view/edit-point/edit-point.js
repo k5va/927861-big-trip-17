@@ -48,7 +48,7 @@ export default class EditPointView extends AbstractView {
    */
   #saveHandler = (evt) => {
     evt.preventDefault();
-    this._callback.save();
+    this._callback.save?.();
   };
 
   /**
@@ -66,7 +66,7 @@ export default class EditPointView extends AbstractView {
    */
   #closeHandler = (evt) => {
     evt.preventDefault();
-    this._callback.close();
+    this._callback.close?.();
   };
 
 
@@ -90,7 +90,7 @@ export default class EditPointView extends AbstractView {
    */
   #keydownHandler = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
-      this._callback.close();
+      this._callback.close?.();
     }
   };
 }
