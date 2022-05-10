@@ -22,6 +22,15 @@ export default class FilterPresenter {
    * Renders filter
    */
   init() {
+    this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
   }
+
+  /**
+   * Change filter handler
+   * @param {String} filter - selected filter
+   */
+  #changeFilterHandler = (filter) => {
+    console.log(`new filter ${filter}`);
+  };
 }
