@@ -10,7 +10,7 @@ const isCurrentPoint = (point) => {
   const dateFrom = dayjs(point.dateFrom);
   const dateTo = dayjs(point.dateTo);
 
-  return dateFrom.isBefore(now, 'D') || dateTo.isAfter(now, 'D');
+  return dateFrom.isBefore(now, 'D') && dateTo.isAfter(now, 'D');
 };
 
 export default isCurrentPoint;
