@@ -31,6 +31,6 @@ export default class FilterPresenter {
    * @param {String} filter - selected filter
    */
   #changeFilterHandler = (filter) => {
-    console.log(`new filter ${filter}`);
+    this.#routeModel.filter = filter;
   };
 }

@@ -1,11 +1,12 @@
-import { render, replace } from '../../framework/render';
+import { remove, render, replace } from '../../framework/render';
 import { EditPointView, NoPointsView, PointListView, PointView, SortView } from '../../view';
-import { Filter, NoPointsMessage } from '../../const';
+import { NoPointsMessage } from '../../const';
 
 
 export default class RoutePresenter {
   #sortView = new SortView();
   #pointListView = new PointListView();
+  #noPointsView = null;
   #container = null;
   #routeModel = null;
   #offersModel = null;
@@ -23,6 +24,8 @@ export default class RoutePresenter {
     this.#routeModel = routeModel;
     this.#offersModel = offersModel;
     this.#destinations = destinations;
+
+    this.#routeModel.addObserver(this.#changeModelHandler);
   }
 
   /**
@@ -34,7 +37,8 @@ export default class RoutePresenter {
       render(this.#pointListView, this.#container);
       this.#routeModel.points.forEach((point) => this.#renderPoint(point));
     } else {
-      render(new NoPointsView(NoPointsMessage[Filter.EVERYTHING]), this.#container);
+      this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
+      render(this.#noPointsView, this.#container);
     }
   }
 
@@ -84,4 +88,11 @@ export default class RoutePresenter {
     replace(pointView, editPointView);
     editPointView.deactivate();
   }
+
+  #changeModelHandler = () => {
+    remove(this.#sortView);
+    remove(this.#pointListView);
+    remove(this.#noPointsView);
+    this.init();
+  };
 }
