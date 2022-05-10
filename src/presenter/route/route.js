@@ -15,7 +15,7 @@ export default class RoutePresenter {
    * Creates new instance of presenter
    * @param {Route} routeModel - route data
    * @param {Offers} offersModel - offers data
-   * @param {Array<Destinations>} destinations - avaliable destinations
+   * @param {Array<Destinations>} destinations - available destinations
    * @param {HTMLElement} container
    */
   constructor(container, routeModel, offersModel, destinations) {
