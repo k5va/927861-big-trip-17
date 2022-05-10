@@ -3,15 +3,18 @@ import { createFiltersTemplate } from './create-filters-template';
 
 export default class FiltersView extends AbstractView {
   #filters = null;
+  #activeFilter = null;
 
   /**
    * Creates new instance of view
    * @param {Array<String>} filters - array of available filters
+   * @param {String} activeFilter - active filter
    */
-  constructor(filters) {
+  constructor(filters, activeFilter) {
     super();
 
     this.#filters = filters;
+    this.#activeFilter = activeFilter;
   }
 
   /**
@@ -19,6 +22,6 @@ export default class FiltersView extends AbstractView {
    * @returns {String} - view's template
    */
   get template() {
-    return createFiltersTemplate(this.#filters);
+    return createFiltersTemplate(this.#filters, this.#activeFilter);
   }
 }
