@@ -1,7 +1,6 @@
-import { Filter, DEFAULT_FILTER, DEFAULT_SORTING, Sorting } from '../../const';
+import { PointFilter, DEFAULT_FILTER, DEFAULT_SORTING, Sorting } from '../../const';
 import Observable from '../../framework/observable';
-import { isCurrentPoint, isFuturePoint, isPastPoint,
-  comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../../utils';
+import { comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../../utils';
 
 export default class Route extends Observable {
   #points = [];
@@ -57,23 +56,13 @@ export default class Route extends Observable {
     this._notify('sorting_change', this.#sorting);
   }
 
-
   /**
    * filters points
    * @param {Array<Point>} points - points
    * @returns {Array<Point>} - points array
    */
   #filterPoints(points) {
-    switch (this.#filter) {
-      case Filter.EVERYTHING:
-        return [...points];
-      case Filter.FUTURE:
-        return points.filter((point) => isFuturePoint(point) || isCurrentPoint(point));
-      case Filter.PAST:
-        return points.filter((point) => isPastPoint(point) || isCurrentPoint(point));
-      default:
-        throw new Error('Unsupported filter');
-    }
+    return PointFilter[this.#filter](points);
   }
 
   /**
