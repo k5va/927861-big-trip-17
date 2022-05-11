@@ -2,7 +2,6 @@ import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
 import { Filter, DEFAULT_FILTER } from '../../const';
 
-
 export default class FilterPresenter {
   #filterView = new FiltersView(Object.values(Filter), DEFAULT_FILTER);
   #container = null;

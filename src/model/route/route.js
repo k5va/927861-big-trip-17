@@ -37,6 +37,7 @@ export default class Route extends Observable {
    */
   set filter(filter) {
     this.#filter = filter;
+    this.#sorting = DEFAULT_SORTING;
     this._notify('filter_change', this.#filter);
   }
 
