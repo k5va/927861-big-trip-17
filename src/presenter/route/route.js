@@ -2,10 +2,9 @@ import { remove, render, replace } from '../../framework/render';
 import { EditPointView, NoPointsView, PointListView, PointView, SortView } from '../../view';
 import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
 
-
 export default class RoutePresenter {
-  #sortView = null;
   #pointListView = new PointListView();
+  #sortView = null;
   #noPointsView = null;
   #container = null;
   #routeModel = null;
@@ -32,12 +31,14 @@ export default class RoutePresenter {
    * Renders points
    */
   init() {
-    if (this.#routeModel.points.length > 0) {
+    const points = this.#routeModel.points;
+
+    if (points.length > 0) {
       this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
       this.#sortView.setChangeHandler(this.#changeSortingHandler);
       render(this.#sortView, this.#container);
       render(this.#pointListView, this.#container);
-      this.#routeModel.points.forEach((point) => this.#renderPoint(point));
+      points.forEach((point) => this.#renderPoint(point));
     } else {
       this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
       render(this.#noPointsView, this.#container);
