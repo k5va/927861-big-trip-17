@@ -8,7 +8,7 @@
 const createSortTemplate = (activeSorting, sortings, disabled) =>
   `<form class="trip-events__trip-sort trip-sort" action="#" method="get">
     ${sortings.map((sorting) => `
-      <div class="trip-sort__item  trip-sort__item--${sorting}">
+      <div class="trip-sort__item  trip-sort__item--${sorting.toLowerCase()}">
         <input id="sort-${sorting}" class="trip-sort__input  visually-hidden"
           type="radio" name="trip-sort" value="${sorting}"
           ${sorting === activeSorting ? 'checked' : ''}
