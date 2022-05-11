@@ -1,10 +1,11 @@
 /**
  * Creates filters template
- * @param {Array<String>} filters - array of available filters
  * @param {String} activeFilter - active filter
+ * @param {Array<String>} filters - array of available filters
+ * @param {Array<String>} disabled - array of disabled filters
  * @returns {String} template
  */
-const createFiltersTemplate = (filters, activeFilter) =>
+const createFiltersTemplate = (activeFilter, filters, disabled) =>
   `<div class="trip-main__trip-controls  trip-controls">
     <div class="trip-controls__filters">
       <h2 class="visually-hidden">Filter events</h2>
@@ -14,6 +15,7 @@ const createFiltersTemplate = (filters, activeFilter) =>
             <input id="filter-${filter}" class="trip-filters__filter-input visually-hidden"
               type="radio" name="trip-filter" value="${filter}"
               ${filter === activeFilter ? 'checked' : ''}
+              ${disabled.includes(filter) ? 'disabled' : ''}
             >
             <label class="trip-filters__filter-label" for="filter-${filter}">${filter}</label>
           </div>

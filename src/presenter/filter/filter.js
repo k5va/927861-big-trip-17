@@ -1,9 +1,9 @@
 import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
-import { Filter, DEFAULT_FILTER } from '../../const';
+import { Filter, PointFilter } from '../../const';
 
 export default class FilterPresenter {
-  #filterView = new FiltersView(Object.values(Filter), DEFAULT_FILTER);
+  #filterView = null;
   #container = null;
   #routeModel = null;
 
@@ -21,6 +21,9 @@ export default class FilterPresenter {
    * Renders filter
    */
   init() {
+    this.#filterView = new FiltersView(this.#routeModel.filter, Object.values(Filter),
+      this.#generateDisabledFilters(this.#routeModel.points)
+    );
     this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
   }
@@ -32,4 +35,13 @@ export default class FilterPresenter {
   #changeFilterHandler = (filter) => {
     this.#routeModel.filter = filter;
   };
+
+  /**
+   * Generates array of disabled filters
+   * @param {Array<Point>} points - array of points
+   * @returns {Array<String>} - array of disabled filters
+   */
+  #generateDisabledFilters(points) {
+    return Object.values(Filter).filter((filter) => PointFilter[filter](points).length === 0);
+  }
 }

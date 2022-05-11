@@ -4,18 +4,21 @@ import { createFiltersTemplate } from './create-filters-template';
 export default class FiltersView extends AbstractView {
   #filters = null;
   #activeFilter = null;
+  #disabled = null;
   #filtersForm = null;
 
   /**
    * Creates new instance of view
-   * @param {Array<String>} filters - array of available filters
    * @param {String} activeFilter - active filter
+   * @param {Array<String>} filters - array of available filters
+   * @param {Array<String>} disabled - array of disabled filters
    */
-  constructor(filters, activeFilter) {
+  constructor(activeFilter, filters, disabled) {
     super();
 
     this.#filters = filters;
     this.#activeFilter = activeFilter;
+    this.#disabled = disabled;
     this.#filtersForm = this.element.querySelector('.trip-filters');
   }
 
@@ -24,7 +27,7 @@ export default class FiltersView extends AbstractView {
    * @returns {String} - view's template
    */
   get template() {
-    return createFiltersTemplate(this.#filters, this.#activeFilter);
+    return createFiltersTemplate(this.#activeFilter, this.#filters, this.#disabled);
   }
 
   /**
