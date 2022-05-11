@@ -3,8 +3,8 @@ const generatePoints = () => JSON.parse(`
   {
       "id": "0",
       "type": "taxi",
-      "date_from": "2022-04-28T17:03:18.133Z",
-      "date_to": "2022-04-29T04:54:31.181Z",
+      "date_from": "2022-06-28T17:03:18.133Z",
+      "date_to": "2022-06-29T04:54:31.181Z",
       "destination": {
           "name": "Paris",
           "description": "Paris, is a beautiful city.",
@@ -66,8 +66,8 @@ const generatePoints = () => JSON.parse(`
   {
       "id": "1",
       "type": "sightseeing",
-      "date_from": "2022-04-29T04:54:31.181Z",
-      "date_to": "2022-04-29T21:46:49.383Z",
+      "date_from": "2022-07-29T04:54:31.181Z",
+      "date_to": "2022-07-29T21:46:49.383Z",
       "destination": {
           "name": "Den Haag",
           "description": "Den Haag, is a beautiful city, with crowded streets, with a beautiful old town, middle-eastern paradise.",
