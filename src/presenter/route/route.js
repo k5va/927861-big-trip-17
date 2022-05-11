@@ -1,10 +1,10 @@
 import { remove, render, replace } from '../../framework/render';
 import { EditPointView, NoPointsView, PointListView, PointView, SortView } from '../../view';
-import { NoPointsMessage } from '../../const';
+import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
 
 
 export default class RoutePresenter {
-  #sortView = new SortView();
+  #sortView = null;
   #pointListView = new PointListView();
   #noPointsView = null;
   #container = null;
@@ -33,6 +33,8 @@ export default class RoutePresenter {
    */
   init() {
     if (this.#routeModel.points.length > 0) {
+      this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
+      this.#sortView.setChangeHandler(this.#changeSortingHandler);
       render(this.#sortView, this.#container);
       render(this.#pointListView, this.#container);
       this.#routeModel.points.forEach((point) => this.#renderPoint(point));
@@ -78,6 +80,10 @@ export default class RoutePresenter {
     replace(editPointView, pointView);
     editPointView.activate();
   }
+
+  #changeSortingHandler = (sorting) => {
+    this.#routeModel.sorting = sorting;
+  };
 
   /**
    * Replaces edit point view to view

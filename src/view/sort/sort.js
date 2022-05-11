@@ -19,7 +19,6 @@ export default class SortView extends AbstractView {
     this.#sortings = sortings;
     this.#activeSorting = activeSorting;
     this.#disabled = disabled;
-    this.#sortingsForm = this.element.querySelector('.trip-events__trip-sort');
   }
 
   /**
@@ -36,7 +35,7 @@ export default class SortView extends AbstractView {
    */
   setChangeHandler(handler) {
     this._callback.change = handler;
-    this.#sortingsForm.addEventListener('change', this.#changeHandler);
+    this.element.addEventListener('change', this.#changeHandler);
   }
 
   /**
