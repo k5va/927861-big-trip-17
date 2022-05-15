@@ -115,7 +115,6 @@ export default class PointPresenter {
    * Add/remove to favorites handler
    */
   #favoritesHandler = () => {
-    this.#point.isFavorite = !this.#point.isFavorite;
-    this.#changePointHandler(this.#point);
+    this.#changePointHandler({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }
