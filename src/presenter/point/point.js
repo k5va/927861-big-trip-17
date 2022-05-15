@@ -8,17 +8,20 @@ export default class PointPresenter {
   #pointView = null;
   #editPointView = null;
   #pointListView = null;
+  #changePointHandler = null;
 
   /**
    * Creates new instance of presenter
    * @param {PointListView} pointListView - point list view
    * @param {Offers} offersModel - offers data
    * @param {Array<Destinations>} destinations - available destinations
+   * @param {Function} changePointHandler - change point handler
    */
-  constructor(pointListView, offersModel, destinations) {
+  constructor(pointListView, offersModel, destinations, changePointHandler) {
     this.#pointListView = pointListView;
     this.#offersModel = offersModel;
     this.#destinations = destinations;
+    this.#changePointHandler = changePointHandler;
   }
 
   /**
@@ -36,17 +39,10 @@ export default class PointPresenter {
       this.#point, this.#offersModel.getOffers(point.type), this.#destinations
     );
 
-    this.#pointView.setEditHandler(() => {
-      this.#replaceViewToEdit(this.#pointView, this.#editPointView);
-    });
-
-    this.#editPointView.setSaveHandler(() => {
-      this.#replaceEditToView(this.#pointView, this.#editPointView);
-    });
-
-    this.#editPointView.setCloseHandler(() => {
-      this.#replaceEditToView(this.#pointView, this.#editPointView);
-    });
+    this.#pointView.setEditHandler(this.#editHandler);
+    this.#pointView.setFavoriteHandler(this.#favoritesHandler);
+    this.#editPointView.setSaveHandler(this.#saveHandler);
+    this.#editPointView.setCloseHandler(this.#closeHandler);
 
     if (!prevPointView || !prevEditPointView) {
       render(this.#pointView, this.#pointListView.element);
@@ -55,7 +51,7 @@ export default class PointPresenter {
 
     // TODO: is it possible? Add method to AbstractView?
     if (this.#pointListView.element.contains(prevPointView.element)) {
-      replace(this.#pointListView, prevPointView);
+      replace(this.#pointView, prevPointView);
     }
 
     if (this.#pointListView.element.contains(prevEditPointView.element)) {
@@ -93,4 +89,33 @@ export default class PointPresenter {
     replace(pointView, editPointView);
     editPointView.deactivate();
   }
+
+  /**
+   * Close handler
+   */
+  #closeHandler = () => {
+    this.#replaceEditToView(this.#pointView, this.#editPointView);
+  };
+
+  /**
+   * Save handler
+   */
+  #saveHandler = () => {
+    this.#replaceEditToView(this.#pointView, this.#editPointView);
+  };
+
+  /**
+   * Edit handler
+   */
+  #editHandler = () => {
+    this.#replaceViewToEdit(this.#pointView, this.#editPointView);
+  };
+
+  /**
+   * Add/remove to favorites handler
+   */
+  #favoritesHandler = () => {
+    this.#point.isFavorite = !this.#point.isFavorite;
+    this.#changePointHandler(this.#point);
+  };
 }

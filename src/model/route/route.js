@@ -24,6 +24,19 @@ export default class Route extends Observable {
   }
 
   /**
+   * Updates given point
+   * @param {Point} updatedPoint - point data
+   */
+  updatePoint(updatedPoint) {
+    const index = this.#points.findIndex(({id}) => id === updatedPoint.id);
+    if (index === -1) {
+      throw new Error (`No such point in model ${updatedPoint.id}`);
+    }
+
+    this.#points = [...this.#points.slice(0, index), updatedPoint, ...this.#points.slice(index + 1)];
+  }
+
+  /**
    * filter getter
    */
   get filter() {

@@ -5,6 +5,7 @@ export default class PointView extends AbstractView {
   #point = null;
   #offers = null;
   #editButtonElement = null;
+  #favoriteButtonElement = null;
 
   /**
    * Creates an instance of point view
@@ -18,6 +19,7 @@ export default class PointView extends AbstractView {
     this.#offers = offers;
 
     this.#editButtonElement = this.element.querySelector('.event__rollup-btn');
+    this.#favoriteButtonElement = this.element.querySelector('.event__favorite-btn');
   }
 
   /**
@@ -44,5 +46,23 @@ export default class PointView extends AbstractView {
   #editHandler = (evt) => {
     evt.preventDefault();
     this._callback.edit?.();
+  };
+
+  /**
+   * Sets add/remove to favorites handler
+   * @param {Function} handler - handler
+   */
+  setFavoriteHandler(handler) {
+    this._callback.favorite = handler;
+    this.#favoriteButtonElement.addEventListener('click', this.#favoriteHandler);
+  }
+
+  /**
+   * Handler for add/remove to favorites
+   * @param {Event} evt - event object
+   */
+  #favoriteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favorite?.();
   };
 }
