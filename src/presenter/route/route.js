@@ -11,6 +11,7 @@ export default class RoutePresenter {
   #routeModel = null;
   #offersModel = null;
   #destinations = null;
+  #pointPresenters = new Map();
 
   /**
    * Creates new instance of presenter
@@ -45,11 +46,21 @@ export default class RoutePresenter {
           this.#pointListView, this.#offersModel, this.#destinations
         );
         pointPresenter.init(point);
+        this.#pointPresenters.set(point.id, pointPresenter);
       }
     } else {
       this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
       render(this.#noPointsView, this.#container);
     }
+  }
+
+  /**
+   * Clears points list and destroys all point presenters
+   */
+  clearPointsList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+    remove(this.#noPointsView);
   }
 
   #changeSortingHandler = (sorting) => {
