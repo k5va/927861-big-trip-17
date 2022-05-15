@@ -1,6 +1,11 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
 
+const Mode = {
+  VIEW: 'VIEW',
+  EDIT: 'EDIT',
+};
+
 export default class PointPresenter {
   #point = null;
   #offersModel = null;
@@ -9,6 +14,8 @@ export default class PointPresenter {
   #editPointView = null;
   #pointListView = null;
   #changePointHandler = null;
+  #mode = Mode.VIEW;
+  #changeModeHandler = null;
 
   /**
    * Creates new instance of presenter
@@ -16,12 +23,14 @@ export default class PointPresenter {
    * @param {Offers} offersModel - offers data
    * @param {Array<Destinations>} destinations - available destinations
    * @param {Function} changePointHandler - change point handler
+   * @param {Function} changeModeHandler - change mode handler
    */
-  constructor(pointListView, offersModel, destinations, changePointHandler) {
+  constructor(pointListView, offersModel, destinations, changePointHandler, changeModeHandler) {
     this.#pointListView = pointListView;
     this.#offersModel = offersModel;
     this.#destinations = destinations;
     this.#changePointHandler = changePointHandler;
+    this.#changeModeHandler = changeModeHandler;
   }
 
   /**
@@ -49,12 +58,9 @@ export default class PointPresenter {
       return;
     }
 
-    // TODO: is it possible? Add method to AbstractView?
-    if (this.#pointListView.element.contains(prevPointView.element)) {
+    if (this.#mode === Mode.VIEW) {
       replace(this.#pointView, prevPointView);
-    }
-
-    if (this.#pointListView.element.contains(prevEditPointView.element)) {
+    } else {
       replace(this.#editPointView, prevEditPointView);
     }
 
@@ -63,7 +69,7 @@ export default class PointPresenter {
   }
 
   /**
-   * removes presenter's view's
+   * removes presenter's views
    */
   destroy() {
     remove(this.#pointView);
@@ -71,44 +77,52 @@ export default class PointPresenter {
   }
 
   /**
-   * Replaces point view to edit view
-   * @param {PointView} pointView - point view
-   * @param {PointEditView} editPointView - point edit view
+   * Reset to point view mode
    */
-  #replaceViewToEdit(pointView, editPointView) {
-    replace(editPointView, pointView);
-    editPointView.activate();
+  resetView() {
+    if (this.#mode !== Mode.VIEW) {
+      this.#replaceEditToView();
+    }
+  }
+
+  /**
+   * Replaces point view to edit view
+   */
+  #replaceViewToEdit() {
+    replace(this.#editPointView, this.#pointView);
+    this.#editPointView.activate();
+    this.#changeModeHandler();
+    this.#mode = Mode.EDIT;
   }
 
   /**
    * Replaces edit point view to view
-   * @param {PointView} pointView - point view
-   * @param {PointEditView} editPointView - point edit view
    */
-  #replaceEditToView(pointView, editPointView) {
-    replace(pointView, editPointView);
-    editPointView.deactivate();
+  #replaceEditToView() {
+    replace(this.#pointView, this.#editPointView);
+    this.#editPointView.deactivate();
+    this.#mode = Mode.VIEW;
   }
 
   /**
    * Close handler
    */
   #closeHandler = () => {
-    this.#replaceEditToView(this.#pointView, this.#editPointView);
+    this.#replaceEditToView();
   };
 
   /**
    * Save handler
    */
   #saveHandler = () => {
-    this.#replaceEditToView(this.#pointView, this.#editPointView);
+    this.#replaceEditToView();
   };
 
   /**
    * Edit handler
    */
   #editHandler = () => {
-    this.#replaceViewToEdit(this.#pointView, this.#editPointView);
+    this.#replaceViewToEdit();
   };
 
   /**

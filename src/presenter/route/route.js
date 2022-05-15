@@ -43,7 +43,8 @@ export default class RoutePresenter {
 
       for (const point of points) {
         const pointPresenter = new PointPresenter(
-          this.#pointListView, this.#offersModel, this.#destinations, this.#changePointHandler
+          this.#pointListView, this.#offersModel, this.#destinations,
+          this.#changePointHandler, this.#changeViewModeHandler
         );
         pointPresenter.init(point);
         this.#pointPresenters.set(point.id, pointPresenter);
@@ -70,6 +71,13 @@ export default class RoutePresenter {
   #changePointHandler = (updatedPoint) => {
     this.#routeModel.updatePoint(updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  /**
+   * Change point's view mode handler
+   */
+  #changeViewModeHandler = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
   #changeSortingHandler = (sorting) => {
