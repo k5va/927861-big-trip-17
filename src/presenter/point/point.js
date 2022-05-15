@@ -1,5 +1,5 @@
 import { PointView, EditPointView } from '../../view';
-import { render, replace } from '../../framework/render';
+import { render, replace, remove } from '../../framework/render';
 
 export default class PointPresenter {
   #point = null;
@@ -28,24 +28,50 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
 
-    const pointView = new PointView(this.#point, this.#offersModel.getOffers(point.type, point.offers));
-    const editPointView = new EditPointView(
+    const prevPointView = this.#pointView;
+    const prevEditPointView = this.#editPointView;
+
+    this.#pointView = new PointView(this.#point, this.#offersModel.getOffers(point.type, point.offers));
+    this.#editPointView = new EditPointView(
       this.#point, this.#offersModel.getOffers(point.type), this.#destinations
     );
 
-    pointView.setEditHandler(() => {
-      this.#replaceViewToEdit(pointView, editPointView);
+    this.#pointView.setEditHandler(() => {
+      this.#replaceViewToEdit(this.#pointView, this.#editPointView);
     });
 
-    editPointView.setSaveHandler(() => {
-      this.#replaceEditToView(pointView, editPointView);
+    this.#editPointView.setSaveHandler(() => {
+      this.#replaceEditToView(this.#pointView, this.#editPointView);
     });
 
-    editPointView.setCloseHandler(() => {
-      this.#replaceEditToView(pointView, editPointView);
+    this.#editPointView.setCloseHandler(() => {
+      this.#replaceEditToView(this.#pointView, this.#editPointView);
     });
 
-    render(pointView, this.#pointListView.element);
+    if (!prevPointView || !prevEditPointView) {
+      render(this.#pointView, this.#pointListView.element);
+      return;
+    }
+
+    // TODO: is it possible? Add method to AbstractView?
+    if (this.#pointListView.element.contains(prevPointView.element)) {
+      replace(this.#pointListView, prevPointView);
+    }
+
+    if (this.#pointListView.element.contains(prevEditPointView.element)) {
+      replace(this.#editPointView, prevEditPointView);
+    }
+
+    remove(prevPointView);
+    remove(prevEditPointView);
+  }
+
+  /**
+   * removes presenter's view's
+   */
+  destroy() {
+    remove(this.#pointView);
+    remove(this.#editPointView);
   }
 
   /**
