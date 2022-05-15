@@ -1,6 +1,7 @@
-import { remove, render, replace } from '../../framework/render';
-import { EditPointView, NoPointsView, PointListView, PointView, SortView } from '../../view';
+import { remove, render } from '../../framework/render';
+import { NoPointsView, PointListView, SortView } from '../../view';
 import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
+import { PointPresenter } from '../../presenter';
 
 export default class RoutePresenter {
   #pointListView = new PointListView();
@@ -10,6 +11,7 @@ export default class RoutePresenter {
   #routeModel = null;
   #offersModel = null;
   #destinations = null;
+  #pointPresenters = new Map();
 
   /**
    * Creates new instance of presenter
@@ -31,75 +33,95 @@ export default class RoutePresenter {
    * Renders points
    */
   init() {
-    const points = this.#routeModel.points;
+    this.#renderRoute();
+  }
 
+  /**
+   * Renders route with filters and sorting
+   */
+  #renderRoute() {
+    const points = this.#routeModel.points;
     if (points.length > 0) {
-      this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
-      this.#sortView.setChangeHandler(this.#changeSortingHandler);
-      render(this.#sortView, this.#container);
-      render(this.#pointListView, this.#container);
-      points.forEach((point) => this.#renderPoint(point));
+      this.#renderSorting();
+      this.#renderPoints(points);
     } else {
-      this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
-      render(this.#noPointsView, this.#container);
+      this.#renderNoPoints();
     }
   }
 
   /**
-   * renders given point
-   * @param {Point} point - point data
+   * Renders list of points
+   * @param {Array<Point>} points - array of points
    */
-  #renderPoint(point) {
-    const pointView = new PointView(point, this.#offersModel.getOffers(point.type, point.offers));
-    const editPointView = new EditPointView(
-      point,
-      this.#offersModel.getOffers(point.type),
-      this.#destinations
-    );
-
-    pointView.setEditHandler(() => {
-      this.#replaceViewToEdit(pointView, editPointView);
-    });
-
-    editPointView.setSaveHandler(() => {
-      this.#replaceEditToView(pointView, editPointView);
-    });
-
-    editPointView.setCloseHandler(() => {
-      this.#replaceEditToView(pointView, editPointView);
-    });
-
-    render(pointView, this.#pointListView.element);
+  #renderPoints(points) {
+    render(this.#pointListView, this.#container);
+    for (const point of points) {
+      const pointPresenter = new PointPresenter(
+        this.#pointListView, this.#offersModel, this.#destinations,
+        this.#changePointHandler, this.#changeViewModeHandler
+      );
+      pointPresenter.init(point);
+      this.#pointPresenters.set(point.id, pointPresenter);
+    }
   }
 
   /**
-   * Replaces point view to edit view
-   * @param {PointView} pointView - point view
-   * @param {PointEditView} editPointView - point edit view
+   * Renders sorting
    */
-  #replaceViewToEdit(pointView, editPointView) {
-    replace(editPointView, pointView);
-    editPointView.activate();
+  #renderSorting() {
+    this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
+    this.#sortView.setChangeHandler(this.#changeSortingHandler);
+    render(this.#sortView, this.#container);
   }
 
+  /**
+   * Renders no points message
+   */
+  #renderNoPoints() {
+    this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
+    render(this.#noPointsView, this.#container);
+  }
+
+  /**
+   * Clears points list and destroys all point presenters
+   */
+  #clearRoute() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+    remove(this.#sortView);
+    remove(this.#pointListView);
+    remove(this.#noPointsView);
+  }
+
+  /**
+   * Change point handler
+   * @param {Point} updatedPoint - point data
+   */
+  #changePointHandler = (updatedPoint) => {
+    this.#routeModel.updatePoint(updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  /**
+   * Change point's view mode handler
+   */
+  #changeViewModeHandler = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  /**
+   * Change sorting handler
+   * @param {String} sorting - new sorting
+   */
   #changeSortingHandler = (sorting) => {
     this.#routeModel.sorting = sorting;
   };
 
   /**
-   * Replaces edit point view to view
-   * @param {PointView} pointView - point view
-   * @param {PointEditView} editPointView - point edit view
+   * Change model handler
    */
-  #replaceEditToView(pointView, editPointView) {
-    replace(pointView, editPointView);
-    editPointView.deactivate();
-  }
-
   #changeModelHandler = () => {
-    remove(this.#sortView);
-    remove(this.#pointListView);
-    remove(this.#noPointsView);
-    this.init();
+    this.#clearRoute();
+    this.#renderRoute();
   };
 }
