@@ -3,6 +3,10 @@ import Observable from '../../framework/observable';
 import { comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../../utils';
 
 export default class Route extends Observable {
+
+  static FILTER_CHANGE = 'FILTER_CHANGE';
+  static SORTING_CHANGE = 'SORTING_CHANGE';
+
   #points = [];
   #filter = DEFAULT_FILTER;
   #sorting = DEFAULT_SORTING;
@@ -50,7 +54,7 @@ export default class Route extends Observable {
   set filter(filter) {
     this.#filter = filter;
     this.#sorting = DEFAULT_SORTING;
-    this._notify('filter_change', this.#filter);
+    this._notify(Route.FILTER_CHANGE, this.#filter);
   }
 
   /**
@@ -65,8 +69,10 @@ export default class Route extends Observable {
    * @param {String} sorting - new sorting
    */
   set sorting(sorting) {
-    this.#sorting = sorting;
-    this._notify('sorting_change', this.#sorting);
+    if (this.#sorting !== sorting) {
+      this.#sorting = sorting;
+      this._notify(Route.SORTING_CHANGE, this.#sorting);
+    }
   }
 
   /**

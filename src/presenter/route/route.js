@@ -33,34 +33,63 @@ export default class RoutePresenter {
    * Renders points
    */
   init() {
+    this.#renderRoute();
+  }
+
+  /**
+   * Renders route with filters and sorting
+   */
+  #renderRoute() {
     const points = this.#routeModel.points;
-
     if (points.length > 0) {
-      this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
-      this.#sortView.setChangeHandler(this.#changeSortingHandler);
-      render(this.#sortView, this.#container);
-      render(this.#pointListView, this.#container);
-
-      for (const point of points) {
-        const pointPresenter = new PointPresenter(
-          this.#pointListView, this.#offersModel, this.#destinations,
-          this.#changePointHandler, this.#changeViewModeHandler
-        );
-        pointPresenter.init(point);
-        this.#pointPresenters.set(point.id, pointPresenter);
-      }
+      this.#renderSorting();
+      this.#renderPoints(points);
     } else {
-      this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
-      render(this.#noPointsView, this.#container);
+      this.#renderNoPoints();
     }
+  }
+
+  /**
+   * Renders list of points
+   * @param {Array<Point>} points - array of points
+   */
+  #renderPoints(points) {
+    render(this.#pointListView, this.#container);
+    for (const point of points) {
+      const pointPresenter = new PointPresenter(
+        this.#pointListView, this.#offersModel, this.#destinations,
+        this.#changePointHandler, this.#changeViewModeHandler
+      );
+      pointPresenter.init(point);
+      this.#pointPresenters.set(point.id, pointPresenter);
+    }
+  }
+
+  /**
+   * Renders sorting
+   */
+  #renderSorting() {
+    this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
+    this.#sortView.setChangeHandler(this.#changeSortingHandler);
+    render(this.#sortView, this.#container);
+  }
+
+  /**
+   * Renders no points message
+   */
+  #renderNoPoints() {
+    this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
+    render(this.#noPointsView, this.#container);
   }
 
   /**
    * Clears points list and destroys all point presenters
    */
-  clearPointsList() {
+  #clearRoute() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+    remove(this.#sortView);
+    remove(this.#pointListView);
     remove(this.#noPointsView);
   }
 
@@ -80,14 +109,19 @@ export default class RoutePresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
+  /**
+   * Change sorting handler
+   * @param {String} sorting - new sorting
+   */
   #changeSortingHandler = (sorting) => {
     this.#routeModel.sorting = sorting;
   };
 
+  /**
+   * Change model handler
+   */
   #changeModelHandler = () => {
-    remove(this.#sortView);
-    remove(this.#pointListView);
-    remove(this.#noPointsView);
-    this.init();
+    this.#clearRoute();
+    this.#renderRoute();
   };
 }
