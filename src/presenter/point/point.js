@@ -13,19 +13,16 @@ export default class PointPresenter {
   #pointView = null;
   #editPointView = null;
   #pointListView = null;
-  #changePointHandler = null;
   #mode = Mode.VIEW;
   #changeModeHandler = null;
 
   /**
    * Creates new instance of presenter
    * @param {PointListView} pointListView - point list view
-   * @param {Function} changePointHandler - change point handler
    * @param {Function} changeModeHandler - change mode handler
    */
-  constructor(pointListView, changePointHandler, changeModeHandler) {
+  constructor(pointListView, changeModeHandler) {
     this.#pointListView = pointListView;
-    this.#changePointHandler = changePointHandler;
     this.#changeModeHandler = changeModeHandler;
   }
 
@@ -125,6 +122,8 @@ export default class PointPresenter {
    * Add/remove to favorites handler
    */
   #favoritesHandler = () => {
-    this.#changePointHandler({...this.#point, isFavorite: !this.#point.isFavorite});
+    const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
+    this.#appStore.updatePoint(updatedPoint);
+    this.init(updatedPoint);
   };
 }
