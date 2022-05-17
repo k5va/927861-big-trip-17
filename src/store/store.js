@@ -34,7 +34,17 @@ export default class Store extends Observable {
   }
 
   /**
-   * Returns single store intance
+   * Initializes Store
+   * @param {Array<Point>} points - points data
+   * @param {Object} offers - offers data
+   * @param {Array<Destination>} destinations - destinations data
+   */
+  static init(points, offers, destinations) {
+    return new Store(points, offers, destinations);
+  }
+
+  /**
+   * Returns single store instance
    * @returns {Store} - instance
    */
   static getInstance() {

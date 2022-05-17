@@ -11,12 +11,12 @@ const tripContainer = document.querySelector('.trip-main');
 const routeContainer = document.querySelector('.trip-events');
 const addPointButtonView = new AddPointButtonView();
 
-const appStore = new Store(
+Store.init(
   Point.parseAll(generatePoints()), Offer.parseAll(generateOffers()), generateDestinations()
 );
 
-const routePresenter = new RoutePresenter(routeContainer, appStore);
-const filterPresenter = new FilterPresenter(tripContainer, appStore);
+const routePresenter = new RoutePresenter(routeContainer);
+const filterPresenter = new FilterPresenter(tripContainer);
 
 filterPresenter.init();
 render(addPointButtonView, tripContainer);

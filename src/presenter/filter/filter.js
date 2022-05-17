@@ -1,20 +1,19 @@
 import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
 import { Filter, PointFilter } from '../../const';
+import Store from '../../store/store';
 
 export default class FilterPresenter {
   #filterView = null;
   #container = null;
-  #appStore = null;
+  #appStore = Store.getInstance();
 
   /**
    * Creates new instance of presenter
-   * @param {Store} appStore - app's store
    * @param {HTMLElement} container
    */
-  constructor(container, appStore) {
+  constructor(container) {
     this.#container = container;
-    this.#appStore = appStore;
   }
 
   /**

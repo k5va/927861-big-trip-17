@@ -1,5 +1,6 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
+import Store from '../../store/store';
 
 const Mode = {
   VIEW: 'VIEW',
@@ -8,7 +9,7 @@ const Mode = {
 
 export default class PointPresenter {
   #point = null;
-  #appStore = null;
+  #appStore = Store.getInstance();
   #pointView = null;
   #editPointView = null;
   #pointListView = null;
@@ -19,13 +20,11 @@ export default class PointPresenter {
   /**
    * Creates new instance of presenter
    * @param {PointListView} pointListView - point list view
-   * @param {Store} appStore - app's store
    * @param {Function} changePointHandler - change point handler
    * @param {Function} changeModeHandler - change mode handler
    */
-  constructor(pointListView, appStore, changePointHandler, changeModeHandler) {
+  constructor(pointListView, changePointHandler, changeModeHandler) {
     this.#pointListView = pointListView;
-    this.#appStore = appStore;
     this.#changePointHandler = changePointHandler;
     this.#changeModeHandler = changeModeHandler;
   }

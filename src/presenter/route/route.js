@@ -2,23 +2,22 @@ import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView, SortView } from '../../view';
 import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
 import { PointPresenter } from '../../presenter';
+import Store from '../../store/store';
 
 export default class RoutePresenter {
   #pointListView = new PointListView();
   #sortView = null;
   #noPointsView = null;
   #container = null;
-  #appStore = null;
+  #appStore = Store.getInstance();
   #pointPresenters = new Map();
 
   /**
    * Creates new instance of presenter
    * @param {HTMLElement} container - HTML container
-   * @param {Store} appStore - app store
    */
-  constructor(container, appStore) {
+  constructor(container) {
     this.#container = container;
-    this.#appStore = appStore;
 
     this.#appStore.addObserver(this.#changeStoreHandler);
   }
@@ -51,8 +50,7 @@ export default class RoutePresenter {
     render(this.#pointListView, this.#container);
     for (const point of points) {
       const pointPresenter = new PointPresenter(
-        this.#pointListView, this.#appStore,
-        this.#changePointHandler, this.#changeViewModeHandler
+        this.#pointListView, this.#changePointHandler, this.#changeViewModeHandler
       );
       pointPresenter.init(point);
       this.#pointPresenters.set(point.id, pointPresenter);
