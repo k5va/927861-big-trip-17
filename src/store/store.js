@@ -1,6 +1,5 @@
-import { PointFilter, DEFAULT_FILTER, DEFAULT_SORTING, Sorting } from '../const';
+import { DEFAULT_FILTER, DEFAULT_SORTING } from '../const';
 import Observable from '../framework/observable';
-import { comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../utils';
 
 export default class Store extends Observable {
 
@@ -56,7 +55,7 @@ export default class Store extends Observable {
    * @returns {Array<Point>} - array of points
    */
   get points() {
-    return this.#sortPoints(this.#filterPoints(this.#points));
+    return [...this.#points];
   }
 
   /**
@@ -131,33 +130,6 @@ export default class Store extends Observable {
     if (this.#sorting !== sorting) {
       this.#sorting = sorting;
       this._notify(Store.SORTING_CHANGE, this.#sorting);
-    }
-  }
-
-  /**
-   * filters points
-   * @param {Array<Point>} points - points
-   * @returns {Array<Point>} - points array
-   */
-  #filterPoints(points) {
-    return PointFilter[this.#filter](points);
-  }
-
-  /**
-   * Sorts points
-   * @param {Array<Point>} points - points
-   * @returns {Array<Point>} - points array
-   */
-  #sortPoints(points) {
-    switch (this.#sorting) {
-      case Sorting.DAY:
-        return [...points].sort(comparePointsByDay);
-      case Sorting.PRICE:
-        return [...points].sort(comparePointsByPrice);
-      case Sorting.TIME:
-        return [...points.sort(comparePointsByTime)];
-      default:
-        throw new Error('Unsupported sorting');
     }
   }
 }

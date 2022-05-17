@@ -3,6 +3,7 @@ import { NoPointsView, PointListView, SortView } from '../../view';
 import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
 import { PointPresenter } from '../../presenter';
 import Store from '../../store/store';
+import { filterPoints, sortPoints } from '../../utils';
 
 export default class RoutePresenter {
   #pointListView = new PointListView();
@@ -44,9 +45,11 @@ export default class RoutePresenter {
 
   /**
    * Renders list of points
-   * @param {Array<Point>} points - array of points
    */
-  #renderPoints(points) {
+  #renderPoints() {
+    const points = sortPoints(
+      filterPoints(this.#appStore.points, this.#appStore.filter), this.#appStore.sorting
+    );
     render(this.#pointListView, this.#container);
     for (const point of points) {
       const pointPresenter = new PointPresenter(
@@ -88,7 +91,7 @@ export default class RoutePresenter {
   /**
    * Change point's view mode handler
    */
-  #changeViewModeHandler = () => {
+  #changeViewModeHandler = () => { // TODO: refactore to store
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
