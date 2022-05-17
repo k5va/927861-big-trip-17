@@ -1,32 +1,27 @@
 import { remove, render } from '../../framework/render';
-import { NoPointsView, PointListView, SortView } from '../../view';
-import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
-import { PointPresenter } from '../../presenter';
+import { NoPointsView, PointListView } from '../../view';
+import { NoPointsMessage } from '../../const';
+import { PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
+import { filterPoints, sortPoints } from '../../utils';
+import Store from '../../store/store';
 
-export default class RoutePresenter {
+export default class RoutePresenter extends AbstractPresenter {
   #pointListView = new PointListView();
-  #sortView = null;
   #noPointsView = null;
   #container = null;
-  #routeModel = null;
-  #offersModel = null;
-  #destinations = null;
   #pointPresenters = new Map();
+  #sortingPresenter = null;
 
   /**
    * Creates new instance of presenter
-   * @param {Route} routeModel - route data
-   * @param {Offers} offersModel - offers data
-   * @param {Array<Destinations>} destinations - available destinations
-   * @param {HTMLElement} container
+   * @param {HTMLElement} container - HTML container
    */
-  constructor(container, routeModel, offersModel, destinations) {
-    this.#container = container;
-    this.#routeModel = routeModel;
-    this.#offersModel = offersModel;
-    this.#destinations = destinations;
+  constructor(container) {
+    super();
 
-    this.#routeModel.addObserver(this.#changeModelHandler);
+    this.#container = container;
+    this._appStore.addObserver(this.#changeStoreHandler);
+    this.#sortingPresenter = new SortingPresenter(this.#container);
   }
 
   /**
@@ -40,10 +35,10 @@ export default class RoutePresenter {
    * Renders route with filters and sorting
    */
   #renderRoute() {
-    const points = this.#routeModel.points;
+    const {points} = this._appStore.state;
     if (points.length > 0) {
       this.#renderSorting();
-      this.#renderPoints(points);
+      this.#renderPoints();
     } else {
       this.#renderNoPoints();
     }
@@ -51,15 +46,12 @@ export default class RoutePresenter {
 
   /**
    * Renders list of points
-   * @param {Array<Point>} points - array of points
    */
-  #renderPoints(points) {
+  #renderPoints() {
+    const {points, filter, sorting} = this._appStore.state;
     render(this.#pointListView, this.#container);
-    for (const point of points) {
-      const pointPresenter = new PointPresenter(
-        this.#pointListView, this.#offersModel, this.#destinations,
-        this.#changePointHandler, this.#changeViewModeHandler
-      );
+    for (const point of sortPoints(filterPoints(points, filter), sorting)) {
+      const pointPresenter = new PointPresenter(this.#pointListView.element);
       pointPresenter.init(point);
       this.#pointPresenters.set(point.id, pointPresenter);
     }
@@ -69,16 +61,15 @@ export default class RoutePresenter {
    * Renders sorting
    */
   #renderSorting() {
-    this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
-    this.#sortView.setChangeHandler(this.#changeSortingHandler);
-    render(this.#sortView, this.#container);
+    this.#sortingPresenter.init();
   }
 
   /**
    * Renders no points message
    */
   #renderNoPoints() {
-    this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
+    const {filter} = this._appStore.state;
+    this.#noPointsView = new NoPointsView(NoPointsMessage[filter]);
     render(this.#noPointsView, this.#container);
   }
 
@@ -88,40 +79,23 @@ export default class RoutePresenter {
   #clearRoute() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-    remove(this.#sortView);
+    this.#sortingPresenter.destroy();
     remove(this.#pointListView);
     remove(this.#noPointsView);
   }
 
   /**
-   * Change point handler
-   * @param {Point} updatedPoint - point data
+   * Change store handler
+   * @param {String} event - event
    */
-  #changePointHandler = (updatedPoint) => {
-    this.#routeModel.updatePoint(updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
-
-  /**
-   * Change point's view mode handler
-   */
-  #changeViewModeHandler = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
-
-  /**
-   * Change sorting handler
-   * @param {String} sorting - new sorting
-   */
-  #changeSortingHandler = (sorting) => {
-    this.#routeModel.sorting = sorting;
-  };
-
-  /**
-   * Change model handler
-   */
-  #changeModelHandler = () => {
-    this.#clearRoute();
-    this.#renderRoute();
+  #changeStoreHandler = (event) => {
+    switch (event) {
+      case Store.FILTER_CHANGE:
+      case Store.SORTING_CHANGE:
+      case Store.POINT_UPDATE:
+        this.#clearRoute();
+        this.#renderRoute();
+        break;
+    }
   };
 }

@@ -1,47 +1,52 @@
 import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
 import { Filter, PointFilter } from '../../const';
+import Store from '../../store/store';
+import { AbstractPresenter } from '../../presenter';
 
-export default class FilterPresenter {
+export default class FilterPresenter extends AbstractPresenter {
   #filterView = null;
   #container = null;
-  #routeModel = null;
 
   /**
    * Creates new instance of presenter
-   * @param {Route} routeModel - route data
    * @param {HTMLElement} container
    */
-  constructor(container, routeModel) {
+  constructor(container) {
+    super();
+
     this.#container = container;
-    this.#routeModel = routeModel;
   }
 
   /**
    * Renders filter
    */
   init() {
-    this.#filterView = new FiltersView(this.#routeModel.filter, Object.values(Filter),
-      this.#generateDisabledFilters(this.#routeModel.points)
-    );
+    const {filter} = this._appStore.state;
+    this.#filterView = new FiltersView(filter, Object.values(Filter), this.#generateDisabledFilters());
     this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
   }
 
   /**
    * Change filter handler
-   * @param {String} filter - selected filter
+   * @param {String} newFilter - selected filter
    */
-  #changeFilterHandler = (filter) => {
-    this.#routeModel.filter = filter;
+  #changeFilterHandler = (newFilter) => {
+    const {filter} = this._appStore.state;
+    if (newFilter !== filter) {
+      this._appStore.dispatch(Store.FILTER_CHANGE, newFilter);
+    }
   };
 
   /**
    * Generates array of disabled filters
-   * @param {Array<Point>} points - array of points
    * @returns {Array<String>} - array of disabled filters
    */
-  #generateDisabledFilters(points) {
-    return Object.values(Filter).filter((filter) => PointFilter[filter](points).length === 0);
+  #generateDisabledFilters() {
+    const {points} = this._appStore.state;
+    return Object
+      .values(Filter)
+      .filter((filter) => PointFilter[filter](points).length === 0);
   }
 }

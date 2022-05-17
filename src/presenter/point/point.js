@@ -1,36 +1,31 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
+import Store from '../../store/store';
+import { filterOffers } from '../../utils';
+import { AbstractPresenter } from '../../presenter';
+import { AppMode } from '../../const';
 
 const Mode = {
   VIEW: 'VIEW',
   EDIT: 'EDIT',
 };
 
-export default class PointPresenter {
+export default class PointPresenter extends AbstractPresenter {
   #point = null;
-  #offersModel = null;
-  #destinations = null;
   #pointView = null;
   #editPointView = null;
-  #pointListView = null;
-  #changePointHandler = null;
+  #container = null;
   #mode = Mode.VIEW;
-  #changeModeHandler = null;
 
   /**
    * Creates new instance of presenter
-   * @param {PointListView} pointListView - point list view
-   * @param {Offers} offersModel - offers data
-   * @param {Array<Destinations>} destinations - available destinations
-   * @param {Function} changePointHandler - change point handler
-   * @param {Function} changeModeHandler - change mode handler
+   * @param {HTMLElement} container
    */
-  constructor(pointListView, offersModel, destinations, changePointHandler, changeModeHandler) {
-    this.#pointListView = pointListView;
-    this.#offersModel = offersModel;
-    this.#destinations = destinations;
-    this.#changePointHandler = changePointHandler;
-    this.#changeModeHandler = changeModeHandler;
+  constructor(container) {
+    super();
+
+    this.#container = container;
+    this._appStore.addObserver(this.#changeStoreHandler);
   }
 
   /**
@@ -40,13 +35,12 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
 
+    const {offers, destinations} = this._appStore.state;
     const prevPointView = this.#pointView;
     const prevEditPointView = this.#editPointView;
 
-    this.#pointView = new PointView(this.#point, this.#offersModel.getOffers(point.type, point.offers));
-    this.#editPointView = new EditPointView(
-      this.#point, this.#offersModel.getOffers(point.type), this.#destinations
-    );
+    this.#pointView = new PointView(this.#point, filterOffers(offers, point.type, point.offers));
+    this.#editPointView = new EditPointView(this.#point, filterOffers(offers, point.type), destinations);
 
     this.#pointView.setEditHandler(this.#editHandler);
     this.#pointView.setFavoriteHandler(this.#favoritesHandler);
@@ -54,7 +48,7 @@ export default class PointPresenter {
     this.#editPointView.setCloseHandler(this.#closeHandler);
 
     if (!prevPointView || !prevEditPointView) {
-      render(this.#pointView, this.#pointListView.element);
+      render(this.#pointView, this.#container);
       return;
     }
 
@@ -79,7 +73,7 @@ export default class PointPresenter {
   /**
    * Reset to point view mode
    */
-  resetView() {
+  #resetView() {
     if (this.#mode !== Mode.VIEW) {
       this.#replaceEditToView();
     }
@@ -91,7 +85,7 @@ export default class PointPresenter {
   #replaceViewToEdit() {
     replace(this.#editPointView, this.#pointView);
     this.#editPointView.activate();
-    this.#changeModeHandler();
+    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.EDIT_POINT);
     this.#mode = Mode.EDIT;
   }
 
@@ -101,6 +95,7 @@ export default class PointPresenter {
   #replaceEditToView() {
     replace(this.#pointView, this.#editPointView);
     this.#editPointView.deactivate();
+    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
     this.#mode = Mode.VIEW;
   }
 
@@ -129,6 +124,17 @@ export default class PointPresenter {
    * Add/remove to favorites handler
    */
   #favoritesHandler = () => {
-    this.#changePointHandler({...this.#point, isFavorite: !this.#point.isFavorite});
+    const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
+    this._appStore.dispatch(Store.POINT_UPDATE, updatedPoint);
+  };
+
+  /**
+   * Change store handler
+   * @param {String} event - event
+   */
+  #changeStoreHandler = (event, payload) => {
+    if (event === Store.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
+      this.#resetView();
+    }
   };
 }

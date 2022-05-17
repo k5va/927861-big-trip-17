@@ -18,4 +18,18 @@ export default class Offer {
   static parse(data) {
     return new Offer(data);
   }
+
+  /**
+   * Creates offers model from raw data
+   * @param {Object} data - raw data
+   * @returns {Object} - offers
+   */
+  static parseAll(data) {
+    const offersData = {};
+    data.forEach(({type, offers}) => {
+      offersData[type] = offers.map(Offer.parse);
+    });
+
+    return offersData;
+  }
 }
