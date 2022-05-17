@@ -1,4 +1,4 @@
-import { DEFAULT_FILTER, DEFAULT_SORTING } from '../const';
+import { DEFAULT_FILTER, DEFAULT_SORTING, AppMode } from '../const';
 import { updatePoint } from '../utils';
 import Observable from '../framework/observable';
 
@@ -7,6 +7,7 @@ export default class Store extends Observable {
   static FILTER_CHANGE = 'FILTER_CHANGE';
   static SORTING_CHANGE = 'SORTING_CHANGE';
   static POINT_UPDATE = 'POINT_UPDATE';
+  static MODE_CHANGE = 'MODE_CHANGE';
 
   #state = {
     points: [],
@@ -14,6 +15,7 @@ export default class Store extends Observable {
     destinations: [],
     filter: DEFAULT_FILTER,
     sorting: DEFAULT_SORTING,
+    mode: AppMode.READY,
   };
 
   /**
@@ -81,6 +83,9 @@ export default class Store extends Observable {
         break;
       case Store.POINT_UPDATE:
         this.#state = {...this.#state, points: updatePoint(payload, points)};
+        break;
+      case Store.MODE_CHANGE:
+        this.#state = {...this.#state, mode: payload};
         break;
       default:
         throw new Error(`Unknown event dispatched to store ${event}`);

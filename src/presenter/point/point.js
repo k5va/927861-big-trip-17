@@ -3,6 +3,7 @@ import { render, replace, remove } from '../../framework/render';
 import Store from '../../store/store';
 import { filterOffers } from '../../utils';
 import { AbstractPresenter } from '../../presenter';
+import { AppMode } from '../../const';
 
 const Mode = {
   VIEW: 'VIEW',
@@ -13,20 +14,18 @@ export default class PointPresenter extends AbstractPresenter {
   #point = null;
   #pointView = null;
   #editPointView = null;
-  #pointListView = null;
+  #container = null;
   #mode = Mode.VIEW;
-  #changeModeHandler = null;
 
   /**
    * Creates new instance of presenter
-   * @param {PointListView} pointListView - point list view
-   * @param {Function} changeModeHandler - change mode handler
+   * @param {HTMLElement} container
    */
-  constructor(pointListView, changeModeHandler) {
+  constructor(container) {
     super();
 
-    this.#pointListView = pointListView;
-    this.#changeModeHandler = changeModeHandler;
+    this.#container = container;
+    this._appStore.addObserver(this.#changeStoreHandler);
   }
 
   /**
@@ -49,7 +48,7 @@ export default class PointPresenter extends AbstractPresenter {
     this.#editPointView.setCloseHandler(this.#closeHandler);
 
     if (!prevPointView || !prevEditPointView) {
-      render(this.#pointView, this.#pointListView.element);
+      render(this.#pointView, this.#container);
       return;
     }
 
@@ -74,7 +73,7 @@ export default class PointPresenter extends AbstractPresenter {
   /**
    * Reset to point view mode
    */
-  resetView() {
+  #resetView() {
     if (this.#mode !== Mode.VIEW) {
       this.#replaceEditToView();
     }
@@ -86,7 +85,7 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceViewToEdit() {
     replace(this.#editPointView, this.#pointView);
     this.#editPointView.activate();
-    this.#changeModeHandler();
+    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.EDIT_POINT);
     this.#mode = Mode.EDIT;
   }
 
@@ -96,6 +95,7 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceEditToView() {
     replace(this.#pointView, this.#editPointView);
     this.#editPointView.deactivate();
+    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
     this.#mode = Mode.VIEW;
   }
 
@@ -126,5 +126,15 @@ export default class PointPresenter extends AbstractPresenter {
   #favoritesHandler = () => {
     const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
     this._appStore.dispatch(Store.POINT_UPDATE, updatedPoint);
+  };
+
+  /**
+   * Change store handler
+   * @param {String} event - event
+   */
+  #changeStoreHandler = (event, payload) => {
+    if (event === Store.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
+      this.#resetView();
+    }
   };
 }
