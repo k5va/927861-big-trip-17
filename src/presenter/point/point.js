@@ -8,8 +8,8 @@ const Mode = {
 };
 
 export default class PointPresenter {
-  #point = null;
   #appStore = Store.getInstance();
+  #point = null;
   #pointView = null;
   #editPointView = null;
   #pointListView = null;

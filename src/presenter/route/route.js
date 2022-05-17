@@ -1,17 +1,17 @@
 import { remove, render } from '../../framework/render';
-import { NoPointsView, PointListView, SortView } from '../../view';
-import { DISABLED_SORTINGS, NoPointsMessage, Sorting } from '../../const';
-import { PointPresenter } from '../../presenter';
+import { NoPointsView, PointListView } from '../../view';
+import { NoPointsMessage } from '../../const';
+import { PointPresenter, SortingPresenter } from '../../presenter';
 import Store from '../../store/store';
 import { filterPoints, sortPoints } from '../../utils';
 
 export default class RoutePresenter {
+  #appStore = Store.getInstance();
   #pointListView = new PointListView();
-  #sortView = null;
   #noPointsView = null;
   #container = null;
-  #appStore = Store.getInstance();
   #pointPresenters = new Map();
+  #sortingPresenter = null;
 
   /**
    * Creates new instance of presenter
@@ -21,6 +21,7 @@ export default class RoutePresenter {
     this.#container = container;
 
     this.#appStore.addObserver(this.#changeStoreHandler);
+    this.#sortingPresenter = new SortingPresenter(this.#container);
   }
 
   /**
@@ -64,9 +65,7 @@ export default class RoutePresenter {
    * Renders sorting
    */
   #renderSorting() {
-    this.#sortView = new SortView(this.#appStore.sorting, Object.values(Sorting), DISABLED_SORTINGS);
-    this.#sortView.setChangeHandler(this.#changeSortingHandler);
-    render(this.#sortView, this.#container);
+    this.#sortingPresenter.init();
   }
 
   /**
@@ -83,7 +82,7 @@ export default class RoutePresenter {
   #clearRoute() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-    remove(this.#sortView);
+    this.#sortingPresenter.destroy();
     remove(this.#pointListView);
     remove(this.#noPointsView);
   }
@@ -91,16 +90,8 @@ export default class RoutePresenter {
   /**
    * Change point's view mode handler
    */
-  #changeViewModeHandler = () => { // TODO: refactore to store
+  #changeViewModeHandler = () => { // TODO: refactor to store
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
-
-  /**
-   * Change sorting handler
-   * @param {String} sorting - new sorting
-   */
-  #changeSortingHandler = (sorting) => {
-    this.#appStore.sorting = sorting;
   };
 
   /**

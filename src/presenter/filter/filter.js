@@ -4,9 +4,9 @@ import { Filter, PointFilter } from '../../const';
 import Store from '../../store/store';
 
 export default class FilterPresenter {
+  #appStore = Store.getInstance();
   #filterView = null;
   #container = null;
-  #appStore = Store.getInstance();
 
   /**
    * Creates new instance of presenter
@@ -21,7 +21,7 @@ export default class FilterPresenter {
    */
   init() {
     this.#filterView = new FiltersView(this.#appStore.filter, Object.values(Filter),
-      this.#generateDisabledFilters(this.#appStore.points) //FIXME: get all points!!! Same to sorting!
+      this.#generateDisabledFilters()
     );
     this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
@@ -37,10 +37,11 @@ export default class FilterPresenter {
 
   /**
    * Generates array of disabled filters
-   * @param {Array<Point>} points - array of points
    * @returns {Array<String>} - array of disabled filters
    */
-  #generateDisabledFilters(points) {
-    return Object.values(Filter).filter((filter) => PointFilter[filter](points).length === 0);
+  #generateDisabledFilters() {
+    return Object
+      .values(Filter)
+      .filter((filter) => PointFilter[filter](this.#appStore.points).length === 0);
   }
 }
