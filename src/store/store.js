@@ -1,15 +1,45 @@
-import { PointFilter, DEFAULT_FILTER, DEFAULT_SORTING, Sorting } from '../../const';
-import Observable from '../../framework/observable';
-import { comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../../utils';
+import { PointFilter, DEFAULT_FILTER, DEFAULT_SORTING, Sorting } from '../const';
+import Observable from '../framework/observable';
+import { comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../utils';
 
-export default class Route extends Observable {
+export default class Store extends Observable {
 
   static FILTER_CHANGE = 'FILTER_CHANGE';
   static SORTING_CHANGE = 'SORTING_CHANGE';
 
   #points = [];
+  #offers = {};
+  #destinations = [];
   #filter = DEFAULT_FILTER;
   #sorting = DEFAULT_SORTING;
+
+  /**
+   * Creates an instamce of Store
+   * @param {Array<Point>} points - points data
+   * @param {Object} offers - offers data
+   * @param {Array<Destination>} destinations - destinations data
+   */
+  constructor(points, offers, destinations) {
+    super();
+
+    if (!Store._instance) {
+      Store._instance = this;
+    }
+
+    this.#points = [...points];
+    this.#offers = {...offers};
+    this.#destinations = [...destinations];
+
+    return Store._instance;
+  }
+
+  /**
+   * Returns single store intance
+   * @returns {Store} - instance
+   */
+  static getInstance() {
+    return Store._instance;
+  }
 
   /**
    * points getter
@@ -41,6 +71,25 @@ export default class Route extends Observable {
   }
 
   /**
+   * Returns offers of given type
+   * @param {String} type - offer type
+   * @param {Array<String>} - ids
+   * @returns {Array<Offer>} - array of offers
+   */
+  getOffers(type, ids) {
+    const typeOffers = this.#offers[type] ? [...this.#offers[type]] : [];
+    if (ids) {
+      return typeOffers.filter((offer) => ids.some((id) => id === offer.id));
+    }
+
+    return typeOffers;
+  }
+
+  get destinations() {
+    return [...this.#destinations];
+  }
+
+  /**
    * filter getter
    */
   get filter() {
@@ -54,7 +103,7 @@ export default class Route extends Observable {
   set filter(filter) {
     this.#filter = filter;
     this.#sorting = DEFAULT_SORTING;
-    this._notify(Route.FILTER_CHANGE, this.#filter);
+    this._notify(Store.FILTER_CHANGE, this.#filter);
   }
 
   /**
@@ -71,7 +120,7 @@ export default class Route extends Observable {
   set sorting(sorting) {
     if (this.#sorting !== sorting) {
       this.#sorting = sorting;
-      this._notify(Route.SORTING_CHANGE, this.#sorting);
+      this._notify(Store.SORTING_CHANGE, this.#sorting);
     }
   }
 

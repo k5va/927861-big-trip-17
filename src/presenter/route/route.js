@@ -8,25 +8,19 @@ export default class RoutePresenter {
   #sortView = null;
   #noPointsView = null;
   #container = null;
-  #routeModel = null;
-  #offersModel = null;
-  #destinations = null;
+  #appStore = null;
   #pointPresenters = new Map();
 
   /**
    * Creates new instance of presenter
-   * @param {Route} routeModel - route data
-   * @param {Offers} offersModel - offers data
-   * @param {Array<Destinations>} destinations - available destinations
-   * @param {HTMLElement} container
+   * @param {HTMLElement} container - HTML container
+   * @param {Store} appStore - app store
    */
-  constructor(container, routeModel, offersModel, destinations) {
+  constructor(container, appStore) {
     this.#container = container;
-    this.#routeModel = routeModel;
-    this.#offersModel = offersModel;
-    this.#destinations = destinations;
+    this.#appStore = appStore;
 
-    this.#routeModel.addObserver(this.#changeModelHandler);
+    this.#appStore.addObserver(this.#changeStoreHandler);
   }
 
   /**
@@ -40,7 +34,7 @@ export default class RoutePresenter {
    * Renders route with filters and sorting
    */
   #renderRoute() {
-    const points = this.#routeModel.points;
+    const points = this.#appStore.points;
     if (points.length > 0) {
       this.#renderSorting();
       this.#renderPoints(points);
@@ -57,7 +51,7 @@ export default class RoutePresenter {
     render(this.#pointListView, this.#container);
     for (const point of points) {
       const pointPresenter = new PointPresenter(
-        this.#pointListView, this.#offersModel, this.#destinations,
+        this.#pointListView, this.#appStore,
         this.#changePointHandler, this.#changeViewModeHandler
       );
       pointPresenter.init(point);
@@ -69,7 +63,7 @@ export default class RoutePresenter {
    * Renders sorting
    */
   #renderSorting() {
-    this.#sortView = new SortView(this.#routeModel.sorting, Object.values(Sorting), DISABLED_SORTINGS);
+    this.#sortView = new SortView(this.#appStore.sorting, Object.values(Sorting), DISABLED_SORTINGS);
     this.#sortView.setChangeHandler(this.#changeSortingHandler);
     render(this.#sortView, this.#container);
   }
@@ -78,7 +72,7 @@ export default class RoutePresenter {
    * Renders no points message
    */
   #renderNoPoints() {
-    this.#noPointsView = new NoPointsView(NoPointsMessage[this.#routeModel.filter]);
+    this.#noPointsView = new NoPointsView(NoPointsMessage[this.#appStore.filter]);
     render(this.#noPointsView, this.#container);
   }
 
@@ -98,7 +92,7 @@ export default class RoutePresenter {
    * @param {Point} updatedPoint - point data
    */
   #changePointHandler = (updatedPoint) => {
-    this.#routeModel.updatePoint(updatedPoint);
+    this.#appStore.updatePoint(updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
@@ -114,13 +108,13 @@ export default class RoutePresenter {
    * @param {String} sorting - new sorting
    */
   #changeSortingHandler = (sorting) => {
-    this.#routeModel.sorting = sorting;
+    this.#appStore.sorting = sorting;
   };
 
   /**
    * Change model handler
    */
-  #changeModelHandler = () => {
+  #changeStoreHandler = () => {
     this.#clearRoute();
     this.#renderRoute();
   };

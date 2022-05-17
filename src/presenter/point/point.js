@@ -8,8 +8,7 @@ const Mode = {
 
 export default class PointPresenter {
   #point = null;
-  #offersModel = null;
-  #destinations = null;
+  #appStore = null;
   #pointView = null;
   #editPointView = null;
   #pointListView = null;
@@ -20,15 +19,13 @@ export default class PointPresenter {
   /**
    * Creates new instance of presenter
    * @param {PointListView} pointListView - point list view
-   * @param {Offers} offersModel - offers data
-   * @param {Array<Destinations>} destinations - available destinations
+   * @param {Store} appStore - app's store
    * @param {Function} changePointHandler - change point handler
    * @param {Function} changeModeHandler - change mode handler
    */
-  constructor(pointListView, offersModel, destinations, changePointHandler, changeModeHandler) {
+  constructor(pointListView, appStore, changePointHandler, changeModeHandler) {
     this.#pointListView = pointListView;
-    this.#offersModel = offersModel;
-    this.#destinations = destinations;
+    this.#appStore = appStore;
     this.#changePointHandler = changePointHandler;
     this.#changeModeHandler = changeModeHandler;
   }
@@ -43,9 +40,9 @@ export default class PointPresenter {
     const prevPointView = this.#pointView;
     const prevEditPointView = this.#editPointView;
 
-    this.#pointView = new PointView(this.#point, this.#offersModel.getOffers(point.type, point.offers));
+    this.#pointView = new PointView(this.#point, this.#appStore.getOffers(point.type, point.offers));
     this.#editPointView = new EditPointView(
-      this.#point, this.#offersModel.getOffers(point.type), this.#destinations
+      this.#point, this.#appStore.getOffers(point.type), this.#appStore.destinations
     );
 
     this.#pointView.setEditHandler(this.#editHandler);

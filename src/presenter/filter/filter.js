@@ -5,24 +5,24 @@ import { Filter, PointFilter } from '../../const';
 export default class FilterPresenter {
   #filterView = null;
   #container = null;
-  #routeModel = null;
+  #appStore = null;
 
   /**
    * Creates new instance of presenter
-   * @param {Route} routeModel - route data
+   * @param {Store} appStore - app's store
    * @param {HTMLElement} container
    */
-  constructor(container, routeModel) {
+  constructor(container, appStore) {
     this.#container = container;
-    this.#routeModel = routeModel;
+    this.#appStore = appStore;
   }
 
   /**
    * Renders filter
    */
   init() {
-    this.#filterView = new FiltersView(this.#routeModel.filter, Object.values(Filter),
-      this.#generateDisabledFilters(this.#routeModel.points)
+    this.#filterView = new FiltersView(this.#appStore.filter, Object.values(Filter),
+      this.#generateDisabledFilters(this.#appStore.points) //FIXME: get all points!!! Same to sorting!
     );
     this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
@@ -33,7 +33,7 @@ export default class FilterPresenter {
    * @param {String} filter - selected filter
    */
   #changeFilterHandler = (filter) => {
-    this.#routeModel.filter = filter;
+    this.#appStore.filter = filter;
   };
 
   /**
