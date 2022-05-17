@@ -8,11 +8,13 @@ export default class Store extends Observable {
   static SORTING_CHANGE = 'SORTING_CHANGE';
   static POINT_UPDATE = 'POINT_UPDATE';
 
-  #points = [];
-  #offers = {};
-  #destinations = [];
-  #filter = DEFAULT_FILTER;
-  #sorting = DEFAULT_SORTING;
+  #state = {
+    points: [],
+    offers: {},
+    destinations: [],
+    filter: DEFAULT_FILTER,
+    sorting: DEFAULT_SORTING,
+  };
 
   /**
    * Creates an instamce of Store
@@ -27,9 +29,12 @@ export default class Store extends Observable {
       Store._instance = this;
     }
 
-    this.#points = [...points];
-    this.#offers = {...offers};
-    this.#destinations = [...destinations];
+    this.#state = {
+      ...this.#state,
+      points: [...points],
+      offers: {...offers},
+      destinations: [...destinations]
+    };
 
     return Store._instance;
   }
@@ -56,51 +61,31 @@ export default class Store extends Observable {
    * points getter
    * @returns {Array<Point>} - array of points
    */
-  get points() {
-    return [...this.#points];
-  }
-
-  get destinations() {
-    return [...this.#destinations];
-  }
-
-  get offers() {
-    return {...this.#offers};
+  get state() {
+    return {...this.#state};
   }
 
   /**
-   * filter getter
+   * Dispatches events to store and modifies it
+   * @param {String} event - event type
+   * @param {Object} payload - payload
    */
-  get filter() {
-    return this.#filter;
-  }
-
-  /**
-   * Sorting getter
-   */
-  get sorting() {
-    return this.#sorting;
-  }
-
   dispatch(event, payload) {
+    const {points} = this.#state;
     switch (event) {
       case Store.FILTER_CHANGE:
-        if (this.#filter !== payload) {
-          this.#filter = payload;
-          this.#sorting = DEFAULT_SORTING;
-          this._notify(Store.FILTER_CHANGE, this.#filter);
-        }
+        this.#state = {...this.#state, filter: payload, sorting: DEFAULT_SORTING};
         break;
       case Store.SORTING_CHANGE:
-        if (this.#sorting !== payload) {
-          this.#sorting = payload;
-          this._notify(Store.SORTING_CHANGE, this.#sorting);
-        }
+        this.#state = {...this.#state, sorting: payload};
         break;
       case Store.POINT_UPDATE:
-        this.#points = updatePoint(payload, this.#points);
-        this._notify(Store.POINT_UPDATE, payload);
+        this.#state = {...this.#state, points: updatePoint(payload, points)};
         break;
+      default:
+        throw new Error(`Unknown event dispatched to store ${event}`);
     }
+
+    this._notify(event, payload);
   }
 }

@@ -20,19 +20,21 @@ export default class FilterPresenter {
    * Renders filter
    */
   init() {
-    this.#filterView = new FiltersView(this.#appStore.filter, Object.values(Filter),
-      this.#generateDisabledFilters()
-    );
+    const {filter} = this.#appStore.state;
+    this.#filterView = new FiltersView(filter, Object.values(Filter), this.#generateDisabledFilters());
     this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
   }
 
   /**
    * Change filter handler
-   * @param {String} filter - selected filter
+   * @param {String} newFilter - selected filter
    */
-  #changeFilterHandler = (filter) => {
-    this.#appStore.dispatch(Store.FILTER_CHANGE, filter);
+  #changeFilterHandler = (newFilter) => {
+    const {filter} = this.#appStore.state;
+    if (newFilter !== filter) {
+      this.#appStore.dispatch(Store.FILTER_CHANGE, newFilter);
+    }
   };
 
   /**
@@ -40,8 +42,9 @@ export default class FilterPresenter {
    * @returns {Array<String>} - array of disabled filters
    */
   #generateDisabledFilters() {
+    const {points} = this.#appStore.state;
     return Object
       .values(Filter)
-      .filter((filter) => PointFilter[filter](this.#appStore.points).length === 0);
+      .filter((filter) => PointFilter[filter](points).length === 0);
   }
 }

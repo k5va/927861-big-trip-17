@@ -20,17 +20,21 @@ export default class SortingPresenter {
    * Renders filter
    */
   init() {
-    this.#sortingView = new SortView(this.#appStore.sorting, Object.values(Sorting), DISABLED_SORTINGS);
+    const {sorting} = this.#appStore.state;
+    this.#sortingView = new SortView(sorting, Object.values(Sorting), DISABLED_SORTINGS);
     this.#sortingView.setChangeHandler(this.#changeSortingHandler);
     render(this.#sortingView, this.#container);
   }
 
   /**
    * Change sorting handler
-   * @param {String} sorting - new sorting
+   * @param {String} newSorting - new sorting
    */
-  #changeSortingHandler = (sorting) => {
-    this.#appStore.dispatch(Store.SORTING_CHANGE, sorting);
+  #changeSortingHandler = (newSorting) => {
+    const {sorting} = this.#appStore.state;
+    if (newSorting !== sorting) {
+      this.#appStore.dispatch(Store.SORTING_CHANGE, newSorting);
+    }
   };
 
   /**

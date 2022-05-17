@@ -35,10 +35,10 @@ export default class RoutePresenter {
    * Renders route with filters and sorting
    */
   #renderRoute() {
-    const points = this.#appStore.points;
+    const {points} = this.#appStore.state;
     if (points.length > 0) {
       this.#renderSorting();
-      this.#renderPoints(points);
+      this.#renderPoints();
     } else {
       this.#renderNoPoints();
     }
@@ -48,11 +48,9 @@ export default class RoutePresenter {
    * Renders list of points
    */
   #renderPoints() {
-    const points = sortPoints(
-      filterPoints(this.#appStore.points, this.#appStore.filter), this.#appStore.sorting
-    );
+    const {points, filter, sorting} = this.#appStore.state;
     render(this.#pointListView, this.#container);
-    for (const point of points) {
+    for (const point of sortPoints(filterPoints(points, filter), sorting)) {
       const pointPresenter = new PointPresenter(
         this.#pointListView, this.#changeViewModeHandler
       );
@@ -72,7 +70,8 @@ export default class RoutePresenter {
    * Renders no points message
    */
   #renderNoPoints() {
-    this.#noPointsView = new NoPointsView(NoPointsMessage[this.#appStore.filter]);
+    const {filter} = this.#appStore.state;
+    this.#noPointsView = new NoPointsView(NoPointsMessage[filter]);
     render(this.#noPointsView, this.#container);
   }
 

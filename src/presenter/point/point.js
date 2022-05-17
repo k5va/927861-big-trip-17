@@ -34,15 +34,12 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
 
+    const {offers, destinations} = this.#appStore.state;
     const prevPointView = this.#pointView;
     const prevEditPointView = this.#editPointView;
 
-    this.#pointView = new PointView(
-      this.#point, filterOffers(this.#appStore.offers, point.type, point.offers)
-    );
-    this.#editPointView = new EditPointView(
-      this.#point, filterOffers(this.#appStore.offers, point.type), this.#appStore.destinations
-    );
+    this.#pointView = new PointView(this.#point, filterOffers(offers, point.type, point.offers));
+    this.#editPointView = new EditPointView(this.#point, filterOffers(offers, point.type), destinations);
 
     this.#pointView.setEditHandler(this.#editHandler);
     this.#pointView.setFavoriteHandler(this.#favoritesHandler);
