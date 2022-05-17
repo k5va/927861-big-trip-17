@@ -8,3 +8,5 @@ export {default as comparePointsByDay} from './compare-points-by-day/compare-poi
 export {default as comparePointsByTime} from './compare-points-by-time/compare-points-by-time';
 export {default as filterPoints} from './filter-points/filter-points';
 export {default as sortPoints} from './sort-points/sort-points';
+export {default as filterOffers} from './filter-offers/filter-offers';
+export {default as updatePoint} from './update-point/update-point';

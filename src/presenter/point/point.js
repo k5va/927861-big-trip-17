@@ -1,6 +1,7 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
 import Store from '../../store/store';
+import { filterOffers } from '../../utils';
 
 const Mode = {
   VIEW: 'VIEW',
@@ -36,9 +37,11 @@ export default class PointPresenter {
     const prevPointView = this.#pointView;
     const prevEditPointView = this.#editPointView;
 
-    this.#pointView = new PointView(this.#point, this.#appStore.getOffers(point.type, point.offers));
+    this.#pointView = new PointView(
+      this.#point, filterOffers(this.#appStore.offers, point.type, point.offers)
+    );
     this.#editPointView = new EditPointView(
-      this.#point, this.#appStore.getOffers(point.type), this.#appStore.destinations
+      this.#point, filterOffers(this.#appStore.offers, point.type), this.#appStore.destinations
     );
 
     this.#pointView.setEditHandler(this.#editHandler);
@@ -123,7 +126,6 @@ export default class PointPresenter {
    */
   #favoritesHandler = () => {
     const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
-    this.#appStore.updatePoint(updatedPoint);
-    this.init(updatedPoint);
+    this.#appStore.dispatch(Store.POINT_UPDATE, updatedPoint);
   };
 }

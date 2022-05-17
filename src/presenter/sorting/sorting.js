@@ -30,7 +30,7 @@ export default class SortingPresenter {
    * @param {String} sorting - new sorting
    */
   #changeSortingHandler = (sorting) => {
-    this.#appStore.sorting = sorting;
+    this.#appStore.dispatch(Store.SORTING_CHANGE, sorting);
   };
 
   /**

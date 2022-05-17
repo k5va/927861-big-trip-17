@@ -32,7 +32,7 @@ export default class FilterPresenter {
    * @param {String} filter - selected filter
    */
   #changeFilterHandler = (filter) => {
-    this.#appStore.filter = filter;
+    this.#appStore.dispatch(Store.FILTER_CHANGE, filter);
   };
 
   /**
