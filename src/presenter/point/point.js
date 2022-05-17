@@ -2,14 +2,14 @@ import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
 import Store from '../../store/store';
 import { filterOffers } from '../../utils';
+import { AbstractPresenter } from '../../presenter';
 
 const Mode = {
   VIEW: 'VIEW',
   EDIT: 'EDIT',
 };
 
-export default class PointPresenter {
-  #appStore = Store.getInstance();
+export default class PointPresenter extends AbstractPresenter {
   #point = null;
   #pointView = null;
   #editPointView = null;
@@ -23,6 +23,8 @@ export default class PointPresenter {
    * @param {Function} changeModeHandler - change mode handler
    */
   constructor(pointListView, changeModeHandler) {
+    super();
+
     this.#pointListView = pointListView;
     this.#changeModeHandler = changeModeHandler;
   }
@@ -34,7 +36,7 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
 
-    const {offers, destinations} = this.#appStore.state;
+    const {offers, destinations} = this._appStore.state;
     const prevPointView = this.#pointView;
     const prevEditPointView = this.#editPointView;
 
@@ -123,6 +125,6 @@ export default class PointPresenter {
    */
   #favoritesHandler = () => {
     const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
-    this.#appStore.dispatch(Store.POINT_UPDATE, updatedPoint);
+    this._appStore.dispatch(Store.POINT_UPDATE, updatedPoint);
   };
 }

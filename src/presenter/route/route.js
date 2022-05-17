@@ -1,12 +1,10 @@
 import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView } from '../../view';
 import { NoPointsMessage } from '../../const';
-import { PointPresenter, SortingPresenter } from '../../presenter';
-import Store from '../../store/store';
+import { PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
 
-export default class RoutePresenter {
-  #appStore = Store.getInstance();
+export default class RoutePresenter extends AbstractPresenter {
   #pointListView = new PointListView();
   #noPointsView = null;
   #container = null;
@@ -18,9 +16,10 @@ export default class RoutePresenter {
    * @param {HTMLElement} container - HTML container
    */
   constructor(container) {
-    this.#container = container;
+    super();
 
-    this.#appStore.addObserver(this.#changeStoreHandler);
+    this.#container = container;
+    this._appStore.addObserver(this.#changeStoreHandler);
     this.#sortingPresenter = new SortingPresenter(this.#container);
   }
 
@@ -35,7 +34,7 @@ export default class RoutePresenter {
    * Renders route with filters and sorting
    */
   #renderRoute() {
-    const {points} = this.#appStore.state;
+    const {points} = this._appStore.state;
     if (points.length > 0) {
       this.#renderSorting();
       this.#renderPoints();
@@ -48,7 +47,7 @@ export default class RoutePresenter {
    * Renders list of points
    */
   #renderPoints() {
-    const {points, filter, sorting} = this.#appStore.state;
+    const {points, filter, sorting} = this._appStore.state;
     render(this.#pointListView, this.#container);
     for (const point of sortPoints(filterPoints(points, filter), sorting)) {
       const pointPresenter = new PointPresenter(
@@ -70,7 +69,7 @@ export default class RoutePresenter {
    * Renders no points message
    */
   #renderNoPoints() {
-    const {filter} = this.#appStore.state;
+    const {filter} = this._appStore.state;
     this.#noPointsView = new NoPointsView(NoPointsMessage[filter]);
     render(this.#noPointsView, this.#container);
   }

@@ -2,9 +2,9 @@ import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
 import { Filter, PointFilter } from '../../const';
 import Store from '../../store/store';
+import { AbstractPresenter } from '../../presenter';
 
-export default class FilterPresenter {
-  #appStore = Store.getInstance();
+export default class FilterPresenter extends AbstractPresenter {
   #filterView = null;
   #container = null;
 
@@ -13,6 +13,8 @@ export default class FilterPresenter {
    * @param {HTMLElement} container
    */
   constructor(container) {
+    super();
+
     this.#container = container;
   }
 
@@ -20,7 +22,7 @@ export default class FilterPresenter {
    * Renders filter
    */
   init() {
-    const {filter} = this.#appStore.state;
+    const {filter} = this._appStore.state;
     this.#filterView = new FiltersView(filter, Object.values(Filter), this.#generateDisabledFilters());
     this.#filterView.setChangeHandler(this.#changeFilterHandler);
     render(this.#filterView, this.#container);
@@ -31,9 +33,9 @@ export default class FilterPresenter {
    * @param {String} newFilter - selected filter
    */
   #changeFilterHandler = (newFilter) => {
-    const {filter} = this.#appStore.state;
+    const {filter} = this._appStore.state;
     if (newFilter !== filter) {
-      this.#appStore.dispatch(Store.FILTER_CHANGE, newFilter);
+      this._appStore.dispatch(Store.FILTER_CHANGE, newFilter);
     }
   };
 
@@ -42,7 +44,7 @@ export default class FilterPresenter {
    * @returns {Array<String>} - array of disabled filters
    */
   #generateDisabledFilters() {
-    const {points} = this.#appStore.state;
+    const {points} = this._appStore.state;
     return Object
       .values(Filter)
       .filter((filter) => PointFilter[filter](points).length === 0);

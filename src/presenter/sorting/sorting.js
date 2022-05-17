@@ -2,9 +2,9 @@ import { remove, render } from '../../framework/render';
 import { Sorting, DISABLED_SORTINGS } from '../../const';
 import { SortView } from '../../view';
 import Store from '../../store/store';
+import { AbstractPresenter } from '../../presenter';
 
-export default class SortingPresenter {
-  #appStore = Store.getInstance();
+export default class SortingPresenter extends AbstractPresenter {
   #sortingView = null;
   #container = null;
 
@@ -13,6 +13,8 @@ export default class SortingPresenter {
    * @param {HTMLElement} container
    */
   constructor(container) {
+    super();
+
     this.#container = container;
   }
 
@@ -20,7 +22,7 @@ export default class SortingPresenter {
    * Renders filter
    */
   init() {
-    const {sorting} = this.#appStore.state;
+    const {sorting} = this._appStore.state;
     this.#sortingView = new SortView(sorting, Object.values(Sorting), DISABLED_SORTINGS);
     this.#sortingView.setChangeHandler(this.#changeSortingHandler);
     render(this.#sortingView, this.#container);
@@ -31,9 +33,9 @@ export default class SortingPresenter {
    * @param {String} newSorting - new sorting
    */
   #changeSortingHandler = (newSorting) => {
-    const {sorting} = this.#appStore.state;
+    const {sorting} = this._appStore.state;
     if (newSorting !== sorting) {
-      this.#appStore.dispatch(Store.SORTING_CHANGE, newSorting);
+      this._appStore.dispatch(Store.SORTING_CHANGE, newSorting);
     }
   };
 
