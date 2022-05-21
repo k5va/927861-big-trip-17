@@ -135,6 +135,9 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener(
       'change', this.#changePointTypeHandler
     );
+    this.element.querySelector('.event__input--destination').addEventListener(
+      'change', this.#changeDestinationHandler
+    );
   }
 
   /**
@@ -145,6 +148,18 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     if (evt.target.classList.contains('event__type-input')) {
       this.updateElement({type: evt.target.value});
+    }
+  };
+
+  /**
+   * Handles change destination event
+   * @param {Event} evt - event object
+   */
+  #changeDestinationHandler = (evt) => {
+    evt.preventDefault();
+    const currentDestination = this._state.allDestinations.find(({name}) => name === evt.target.value);
+    if (currentDestination) {
+      this.updateElement({destination: evt.target.value, currentDestination});
     }
   };
 }
