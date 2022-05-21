@@ -1,4 +1,5 @@
 import { PointType } from '../../const';
+import { filterOffers } from '../../utils';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 
@@ -11,7 +12,7 @@ export default class EditPointView extends AbstractStatefulView {
    * Creates an instance of view
    * @param {Point} point - point data
    * @param {Array<Destination>} destinations - available destinations
-   * @param {Array<Offer>} offers - available offers
+   * @param {Object} offers - available offers
    */
   constructor(point, offers, destinations) {
     super();
@@ -109,7 +110,8 @@ export default class EditPointView extends AbstractStatefulView {
       pointTypes: Object.values(PointType),
       currentDestination: destinations.find(({name}) => name === point.destination),
       allDestinations: [...destinations],
-      allOffers: [...offers]
+      filteredOffers: filterOffers(offers, point.type),
+      allOffers: offers,
     };
   }
 
@@ -147,7 +149,11 @@ export default class EditPointView extends AbstractStatefulView {
   #changePointTypeHandler = (evt) => {
     evt.preventDefault();
     if (evt.target.classList.contains('event__type-input')) {
-      this.updateElement({type: evt.target.value});
+      this.updateElement({
+        type: evt.target.value,
+        offers: [],
+        filteredOffers: filterOffers(this._state.allOffers, evt.target.value),
+      });
     }
   };
 

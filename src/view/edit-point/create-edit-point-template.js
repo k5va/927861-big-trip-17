@@ -11,7 +11,7 @@ import { createDestinationsTemplate } from './create-destinations-template';
  */
 const createEditPointTemplate = (state) => {
   const {type, dateFrom, dateTo, offers, pointTypes,
-    bestPrice, currentDestination, allDestinations, allOffers} = state;
+    bestPrice, currentDestination, allDestinations, filteredOffers} = state;
   const eventStartTime = formatDate(dateFrom, 'DD/MM/YY HH:mm');
   const eventEndTime = formatDate(dateTo, 'DD/MM/YY HH:mm');
 
@@ -72,7 +72,7 @@ const createEditPointTemplate = (state) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-          <div class="event__available-offers">${createOffersTemplate(offers, allOffers)}</div>
+          <div class="event__available-offers">${createOffersTemplate(offers, filteredOffers)}</div>
         </section>
 
         <section class="event__section  event__section--destination">
