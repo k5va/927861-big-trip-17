@@ -6,15 +6,12 @@ import { createDestinationsTemplate } from './create-destinations-template';
 
 /**
  * Creates edit event template
- * @param {Point} point - point data
- * @param {Array<Offer>} offers - available offers
- * @param {Array<Destination>} destinations - available destinations
+ * @param {Object} state - view's state
  * @returns {String} template
  */
-const createEditPointTemplate = (point, offers, destinations) => {
-  const {type, dateFrom, dateTo, destination, bestPrice} = point;
-  const currentDestination = destinations.find(({name}) => name === destination);
-
+const createEditPointTemplate = (state) => {
+  const {type, dateFrom, dateTo, offers, pointTypes,
+    bestPrice, currentDestination, allDestinations, allOffers} = state;
   const eventStartTime = formatDate(dateFrom, 'DD/MM/YY HH:mm');
   const eventEndTime = formatDate(dateTo, 'DD/MM/YY HH:mm');
 
@@ -32,7 +29,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createPointTypesTemplate(type)}
+              ${createPointTypesTemplate(type, pointTypes)}
             </fieldset>
           </div>
         </div>
@@ -42,7 +39,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
           <input class="event__input  event__input--destination" id="event-destination-1"
             type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-          ${createDestinationsTemplate(destinations)}
+          ${createDestinationsTemplate(allDestinations)}
           </datalist>
         </div>
 
@@ -75,7 +72,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-          <div class="event__available-offers">${createOffersTemplate(point.offers, offers)}</div>
+          <div class="event__available-offers">${createOffersTemplate(offers, allOffers)}</div>
         </section>
 
         <section class="event__section  event__section--destination">
@@ -86,7 +83,6 @@ const createEditPointTemplate = (point, offers, destinations) => {
       </section>
     </form>
   </li>`;
-
 };
 
 export {createEditPointTemplate};

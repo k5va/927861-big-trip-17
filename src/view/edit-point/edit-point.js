@@ -1,12 +1,11 @@
-import AbstractView from '../../framework/view/abstract-view';
+import { PointType } from '../../const';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 
-export default class EditPointView extends AbstractView {
-  #point = null;
-  #offers = null;
-  #destinations = null;
+export default class EditPointView extends AbstractStatefulView {
   #formElement = null;
   #closeButtonElement = null;
+  #typeListElement = null;
 
   /**
    * Creates an instance of view
@@ -17,12 +16,8 @@ export default class EditPointView extends AbstractView {
   constructor(point, offers, destinations) {
     super();
 
-    this.#point = point;
-    this.#offers = offers;
-    this.#destinations = destinations;
-
-    this.#formElement = this.element.querySelector('.event--edit');
-    this.#closeButtonElement = this.element.querySelector('.event__rollup-btn');
+    this._state = this.#mapPointToState(point, offers, destinations);
+    this.#setInnerHandlers();
   }
 
   /**
@@ -30,7 +25,7 @@ export default class EditPointView extends AbstractView {
    * @returns {String} - view's template
    */
   get template() {
-    return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
+    return createEditPointTemplate(this._state);
   }
 
   /**
@@ -39,7 +34,7 @@ export default class EditPointView extends AbstractView {
    */
   setSaveHandler(handler) {
     this._callback.save = handler;
-    this.#formElement.addEventListener('submit', this.#saveHandler);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#saveHandler);
   }
 
   /**
@@ -57,7 +52,7 @@ export default class EditPointView extends AbstractView {
    */
   setCloseHandler(handler) {
     this._callback.close = handler;
-    this.#closeButtonElement.addEventListener('click', this.#closeHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeHandler);
   }
 
   /**
@@ -91,6 +86,65 @@ export default class EditPointView extends AbstractView {
   #keydownHandler = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
       this._callback.close?.();
+    }
+  };
+
+  /**
+   * Restores all handlers
+   */
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setSaveHandler(this._callback.save);
+    this.setCloseHandler(this._callback.close);
+  };
+
+  /**
+   * Maps point data to view's state
+   * @param {Point} point
+   * @returns {Object} state
+   */
+  #mapPointToState(point, offers, destinations) {
+    return {
+      ...point,
+      pointTypes: Object.values(PointType),
+      currentDestination: destinations.find(({name}) => name === point.destination),
+      allDestinations: [...destinations],
+      allOffers: [...offers]
+    };
+  }
+
+  /**
+   * Maps view's state data to point
+   * @returns {Point} point
+   */
+  #mapStateToPoint() {
+    const point = {...this._state};
+
+    delete point.allOffers;
+    delete point.pointTypes;
+    delete point.currentDestination;
+    delete point.allDestinations;
+
+    return point;
+  }
+
+  /**
+   * Sets all inner handlers
+   */
+  #setInnerHandlers() {
+    this.element.querySelector('.event__type-list').addEventListener(
+      'change', this.#changePointTypeHandler
+    );
+  }
+
+  /**
+   * Handles change point type event
+   * @param {Event} evt - event object
+   */
+  #changePointTypeHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.classList.contains('event__type-input')) {
+      this.updateElement({type: evt.target.value});
     }
   };
 }
