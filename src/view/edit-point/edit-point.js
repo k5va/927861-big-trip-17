@@ -62,6 +62,15 @@ export default class EditPointView extends AbstractStatefulView {
     this._callback.close?.();
   };
 
+  /**
+   * Resets view
+   * @param {Point} point - point data
+   * @param {Array<Destination>} destinations - available destinations
+   * @param {Object} offers - available offers
+   */
+  reset(point, offers, destinations) {
+    this.updateElement(this.#mapPointToState(point, offers, destinations));
+  }
 
   /**
    * Activates view (when is visible to user)
