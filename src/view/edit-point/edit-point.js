@@ -137,6 +137,9 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener(
       'change', this.#changeDestinationHandler
     );
+    this.element.querySelector('.event__available-offers').addEventListener(
+      'change', this.#changeOfferHandler
+    );
     this.element.querySelector('.event__input--price').addEventListener(
       'input', this.#inputPriceHandler
     );
@@ -177,5 +180,21 @@ export default class EditPointView extends AbstractStatefulView {
   #inputPriceHandler = (evt) => {
     evt.preventDefault();
     this._setState({bestPrice: evt.target.value});
+  };
+
+  /**
+   * Handles change offer event
+   * @param {Event} evt - event object
+   */
+  #changeOfferHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.classList.contains('event__offer-checkbox')) {
+      const {offers} = this._state;
+      const selectedOffers = evt.target.checked ?
+        [...offers, evt.target.value] :
+        offers.filter((value) => value !== evt.target.value);
+
+      this._setState({offers: selectedOffers});
+    }
   };
 }

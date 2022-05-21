@@ -7,7 +7,7 @@
 const createOffersTemplate = (selectedIds, offers) => offers.map(({id, title, price}) => `
  <div class="event__offer-selector">
    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}"
-     type="checkbox" name="event-offer-${id}"
+     type="checkbox" name="event-offer-${id}" value="${id}"
      ${selectedIds.some((selectedId) => selectedId === id) ? 'checked' : ''}>
    <label class="event__offer-label" for="event-offer-${id}">
      <span class="event__offer-title">${title}</span>
