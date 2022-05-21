@@ -4,9 +4,6 @@ import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 
 export default class EditPointView extends AbstractStatefulView {
-  #formElement = null;
-  #closeButtonElement = null;
-  #typeListElement = null;
 
   /**
    * Creates an instance of view
@@ -140,6 +137,10 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener(
       'change', this.#changeDestinationHandler
     );
+    this.element.querySelector('.event__input--price').addEventListener(
+      'input', this.#inputPriceHandler
+    );
+
   }
 
   /**
@@ -167,5 +168,14 @@ export default class EditPointView extends AbstractStatefulView {
     if (currentDestination) {
       this.updateElement({destination: evt.target.value, currentDestination});
     }
+  };
+
+  /**
+   * Change price handler
+   * @param {Event} evt - event object
+   */
+  #inputPriceHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({bestPrice: evt.target.value});
   };
 }
