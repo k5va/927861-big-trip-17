@@ -6,7 +6,8 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends AbstractStatefulView {
-  #datepicker = null;
+  #dateFromPicker = null;
+  #dateToPicker = null;
 
   /**
    * Creates an instance of view
@@ -19,6 +20,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     this._state = this.#mapPointToState(point, offers, destinations);
     this.#setInnerHandlers();
+    this.#setDatePickers();
   }
 
   /**
@@ -104,6 +106,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatePickers();
     this.setSaveHandler(this._callback.save);
     this.setCloseHandler(this._callback.close);
   };
@@ -151,7 +154,6 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('change', this.#changeOfferHandler);
     this.element.querySelector('.event__input--price')
       .addEventListener('input', this.#inputPriceHandler);
-    this.#setDatePicker();
   }
 
   /**
@@ -209,14 +211,14 @@ export default class EditPointView extends AbstractStatefulView {
   /**
    * Initializes date picking
    */
-  #setDatePicker() {
+  #setDatePickers() {
     const params = {enableTime: true, dateFormat: 'd/m/y H:i', 'time_24hr': true};
 
-    this.#datepicker = flatpickr(
+    this.#dateFromPicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {...params, defaultDate: this._state.dateFrom, onChange: this.#changeDateFromHandler},
     );
-    this.#datepicker = flatpickr(
+    this.#dateToPicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {...params, defaultDate: this._state.dateTo, onChange: this.#changeDateToHandler},
     );
@@ -234,5 +236,18 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #changeDateToHandler = ([userDate]) => {
     this._setState({dateTo: userDate});
+  };
+
+  /**
+   * removes element
+   */
+  removeElement = () => {
+    super.removeElement();
+
+    this.#dateFromPicker?.destroy();
+    this.#dateFromPicker = null;
+
+    this.#dateToPicker?.destroy();
+    this.#dateToPicker = null;
   };
 }
