@@ -138,6 +138,7 @@ export default class EditPointView extends AbstractStatefulView {
     delete point.pointTypes;
     delete point.currentDestination;
     delete point.allDestinations;
+    delete point.filterOffers;
 
     return point;
   }

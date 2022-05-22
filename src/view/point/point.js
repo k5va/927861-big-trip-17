@@ -1,11 +1,8 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createPointTemplate } from './create-point-template';
+import { filterOffers } from '../../utils';
 
-export default class PointView extends AbstractView {
-  #point = null;
-  #offers = null;
-  #editButtonElement = null;
-  #favoriteButtonElement = null;
+export default class PointView extends AbstractStatefulView {
 
   /**
    * Creates an instance of point view
@@ -15,11 +12,7 @@ export default class PointView extends AbstractView {
   constructor(point, offers) {
     super();
 
-    this.#point = point;
-    this.#offers = offers;
-
-    this.#editButtonElement = this.element.querySelector('.event__rollup-btn');
-    this.#favoriteButtonElement = this.element.querySelector('.event__favorite-btn');
+    this._state = this.#mapPointToState(point, offers);
   }
 
   /**
@@ -27,7 +20,7 @@ export default class PointView extends AbstractView {
    * @returns {String} - view's template
    */
   get template() {
-    return createPointTemplate(this.#point, this.#offers);
+    return createPointTemplate(this._state);
   }
 
   /**
@@ -36,7 +29,7 @@ export default class PointView extends AbstractView {
    */
   setEditHandler(handler) {
     this._callback.edit = handler;
-    this.#editButtonElement.addEventListener('click', this.#editHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editHandler);
   }
 
   /**
@@ -54,7 +47,7 @@ export default class PointView extends AbstractView {
    */
   setFavoriteHandler(handler) {
     this._callback.favorite = handler;
-    this.#favoriteButtonElement.addEventListener('click', this.#favoriteHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteHandler);
   }
 
   /**
@@ -63,6 +56,39 @@ export default class PointView extends AbstractView {
    */
   #favoriteHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favorite?.();
+    this.updateElement({isFavorite: !this._state.isFavorite});
+    this._callback.favorite?.(this.#mapStateToPoint());
+  };
+
+  /**
+   * Maps point data to view's state
+   * @param {Point} point
+   * @returns {Object} state
+   */
+  #mapPointToState(point, offers) {
+    return {
+      ...point,
+      filteredOffers: filterOffers(offers, point.type, point.offers),
+    };
+  }
+
+  /**
+   * Maps view's state data to point
+   * @returns {Point} point
+   */
+  #mapStateToPoint() {
+    const point = {...this._state};
+
+    delete point.filterOffers;
+
+    return point;
+  }
+
+  /**
+   * Restores all handlers
+   */
+  _restoreHandlers = () => {
+    this.setEditHandler(this._callback.edit);
+    this.setFavoriteHandler(this._callback.favorite);
   };
 }

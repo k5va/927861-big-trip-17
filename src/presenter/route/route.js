@@ -92,7 +92,6 @@ export default class RoutePresenter extends AbstractPresenter {
     switch (event) {
       case Store.FILTER_CHANGE:
       case Store.SORTING_CHANGE:
-      case Store.POINT_UPDATE:
         this.#clearRoute();
         this.#renderRoute();
         break;
