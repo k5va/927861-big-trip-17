@@ -2,8 +2,11 @@ import { PointType } from '../../const';
 import { filterOffers } from '../../utils';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createEditPointTemplate } from './create-edit-point-template';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends AbstractStatefulView {
+  #datepicker = null;
 
   /**
    * Creates an instance of view
@@ -140,19 +143,15 @@ export default class EditPointView extends AbstractStatefulView {
    * Sets all inner handlers
    */
   #setInnerHandlers() {
-    this.element.querySelector('.event__type-list').addEventListener(
-      'change', this.#changePointTypeHandler
-    );
-    this.element.querySelector('.event__input--destination').addEventListener(
-      'change', this.#changeDestinationHandler
-    );
-    this.element.querySelector('.event__available-offers').addEventListener(
-      'change', this.#changeOfferHandler
-    );
-    this.element.querySelector('.event__input--price').addEventListener(
-      'input', this.#inputPriceHandler
-    );
-
+    this.element.querySelector('.event__type-list')
+      .addEventListener('change', this.#changePointTypeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#changeDestinationHandler);
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#changeOfferHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('input', this.#inputPriceHandler);
+    this.#setDatePicker();
   }
 
   /**
@@ -205,5 +204,35 @@ export default class EditPointView extends AbstractStatefulView {
 
       this._setState({offers: selectedOffers});
     }
+  };
+
+  /**
+   * Initializes date picking
+   */
+  #setDatePicker() {
+    const params = {enableTime: true, dateFormat: 'd/m/y H:i', 'time_24hr': true};
+
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {...params, defaultDate: this._state.dateFrom, onChange: this.#changeDateFromHandler},
+    );
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {...params, defaultDate: this._state.dateTo, onChange: this.#changeDateToHandler},
+    );
+  }
+
+  /**
+   * Change date from handler
+   */
+  #changeDateFromHandler = ([userDate]) => {
+    this._setState({dateFrom: userDate});
+  };
+
+  /**
+   * Change date To handler
+   */
+  #changeDateToHandler = ([userDate]) => {
+    this._setState({dateTo: userDate});
   };
 }
