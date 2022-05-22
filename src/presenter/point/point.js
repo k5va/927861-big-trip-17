@@ -40,7 +40,7 @@ export default class PointPresenter extends AbstractPresenter {
     const prevEditPointView = this.#editPointView;
 
     this.#pointView = new PointView(this.#point, filterOffers(offers, point.type, point.offers));
-    this.#editPointView = new EditPointView(this.#point, filterOffers(offers, point.type), destinations);
+    this.#editPointView = new EditPointView(this.#point, offers, destinations);
 
     this.#pointView.setEditHandler(this.#editHandler);
     this.#pointView.setFavoriteHandler(this.#favoritesHandler);
@@ -93,8 +93,10 @@ export default class PointPresenter extends AbstractPresenter {
    * Replaces edit point view to view
    */
   #replaceEditToView() {
-    replace(this.#pointView, this.#editPointView);
+    const {offers, destinations} = this._appStore.state;
+    this.#editPointView.reset(this.#point, offers, destinations);
     this.#editPointView.deactivate();
+    replace(this.#pointView, this.#editPointView);
     this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
     this.#mode = Mode.VIEW;
   }
