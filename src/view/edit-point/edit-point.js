@@ -46,7 +46,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #saveHandler = (evt) => {
     evt.preventDefault();
-    this._callback.save?.();
+    this._callback.save?.(this.#mapStateToPoint());
   };
 
   /**

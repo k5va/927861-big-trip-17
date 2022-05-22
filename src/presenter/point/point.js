@@ -110,9 +110,11 @@ export default class PointPresenter extends AbstractPresenter {
 
   /**
    * Save handler
+   * @param {Point} point - updated point
    */
-  #saveHandler = () => {
+  #saveHandler = (point) => {
     this.#replaceEditToView();
+    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
   };
 
   /**
