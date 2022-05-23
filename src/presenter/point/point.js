@@ -1,7 +1,6 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
 import Store from '../../store/store';
-import { filterOffers } from '../../utils';
 import { AbstractPresenter } from '../../presenter';
 import { AppMode } from '../../const';
 
@@ -39,7 +38,7 @@ export default class PointPresenter extends AbstractPresenter {
     const prevPointView = this.#pointView;
     const prevEditPointView = this.#editPointView;
 
-    this.#pointView = new PointView(this.#point, filterOffers(offers, point.type, point.offers));
+    this.#pointView = new PointView(this.#point, offers);
     this.#editPointView = new EditPointView(this.#point, offers, destinations);
 
     this.#pointView.setEditHandler(this.#editHandler);
@@ -75,6 +74,8 @@ export default class PointPresenter extends AbstractPresenter {
    */
   #resetView() {
     if (this.#mode !== Mode.VIEW) {
+      const {offers, destinations} = this._appStore.state;
+      this.#editPointView.reset(this.#point, offers, destinations);
       this.#replaceEditToView();
     }
   }
@@ -93,8 +94,6 @@ export default class PointPresenter extends AbstractPresenter {
    * Replaces edit point view to view
    */
   #replaceEditToView() {
-    const {offers, destinations} = this._appStore.state;
-    this.#editPointView.reset(this.#point, offers, destinations);
     this.#editPointView.deactivate();
     replace(this.#pointView, this.#editPointView);
     this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
@@ -105,14 +104,18 @@ export default class PointPresenter extends AbstractPresenter {
    * Close handler
    */
   #closeHandler = () => {
+    const {offers, destinations} = this._appStore.state;
+    this.#editPointView.reset(this.#point, offers, destinations);
     this.#replaceEditToView();
   };
 
   /**
    * Save handler
+   * @param {Point} point - updated point
    */
-  #saveHandler = () => {
+  #saveHandler = (point) => {
     this.#replaceEditToView();
+    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
   };
 
   /**
@@ -124,10 +127,10 @@ export default class PointPresenter extends AbstractPresenter {
 
   /**
    * Add/remove to favorites handler
+   * @param {Point} point - updated point
    */
-  #favoritesHandler = () => {
-    const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
-    this._appStore.dispatch(Store.POINT_UPDATE, updatedPoint);
+  #favoritesHandler = (point) => {
+    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
   };
 
   /**

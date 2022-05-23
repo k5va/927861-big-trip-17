@@ -2,12 +2,11 @@ import { formatDate, formatDuration } from '../../utils';
 
 /**
  * Creates event template
- * @param {Point} point - point
- * @param {Array<Offer>} offers - offers
+ * @param {Object} state - view's state
  * @returns {String} template
  */
-const createPointTemplate = (point, offers) => {
-  const {type, dateFrom, dateTo, destination, bestPrice, isFavorite} = point;
+const createPointTemplate = (state) => {
+  const {type, dateFrom, dateTo, destination, bestPrice, isFavorite, filteredOffers} = state;
 
   const favoriteClass = isFavorite ? 'event__favorite-btn--active' : '';
   const eventDateFull = formatDate(dateFrom, 'YYYY-MM-DD');
@@ -18,7 +17,7 @@ const createPointTemplate = (point, offers) => {
   const eventEndTime = formatDate(dateTo, 'HH:mm');
   const duration = formatDuration(dateFrom, dateTo);
 
-  const offersList = offers.map(({title, price}) => `
+  const offersList = filteredOffers.map(({title, price}) => `
     <li class="event__offer">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
