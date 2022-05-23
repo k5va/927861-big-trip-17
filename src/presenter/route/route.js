@@ -88,12 +88,15 @@ export default class RoutePresenter extends AbstractPresenter {
    * Change store handler
    * @param {String} event - event
    */
-  #changeStoreHandler = (event) => {
+  #changeStoreHandler = (event, payload) => {
     switch (event) {
       case Store.FILTER_CHANGE:
       case Store.SORTING_CHANGE:
         this.#clearRoute();
         this.#renderRoute();
+        break;
+      case Store.POINT_UPDATE:
+        this.#pointPresenters.get(payload.id).init(payload);
         break;
     }
   };

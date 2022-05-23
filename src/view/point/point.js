@@ -56,7 +56,7 @@ export default class PointView extends AbstractStatefulView {
    */
   #favoriteHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({isFavorite: !this._state.isFavorite});
+    this._setState({isFavorite: !this._state.isFavorite});
     this._callback.favorite?.(this.#mapStateToPoint());
   };
 
