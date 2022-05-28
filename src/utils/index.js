@@ -10,3 +10,4 @@ export {default as filterPoints} from './filter-points/filter-points';
 export {default as sortPoints} from './sort-points/sort-points';
 export {default as filterOffers} from './filter-offers/filter-offers';
 export {default as updatePoint} from './update-point/update-point';
+export {default as deletePoint} from './delete-point/delete-point';

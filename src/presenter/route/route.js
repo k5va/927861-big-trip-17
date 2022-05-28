@@ -93,11 +93,10 @@ export default class RoutePresenter extends AbstractPresenter {
       case Store.FILTER_CHANGE:
       case Store.SORTING_CHANGE:
       case Store.POINT_UPDATE:
+      case Store.POINT_DELETE:
         this.#clearRoute();
         this.#renderRoute();
-        return;
-      default:
-        throw new Error(`Unknown event: ${event}`);
+        break;
     }
   };
 }

@@ -1,5 +1,5 @@
 import { DEFAULT_FILTER, DEFAULT_SORTING, AppMode } from '../const';
-import { updatePoint } from '../utils';
+import { updatePoint, deletePoint } from '../utils';
 import Observable from '../framework/observable';
 
 export default class Store extends Observable {
@@ -7,6 +7,8 @@ export default class Store extends Observable {
   static FILTER_CHANGE = 'FILTER_CHANGE';
   static SORTING_CHANGE = 'SORTING_CHANGE';
   static POINT_UPDATE = 'POINT_UPDATE';
+  static POINT_DELETE = 'POINT_DELETE';
+  static POINT_ADD = 'POINT_ADD';
   static MODE_CHANGE = 'MODE_CHANGE';
 
   #state = {
@@ -83,6 +85,9 @@ export default class Store extends Observable {
         break;
       case Store.POINT_UPDATE:
         this.#state = {...this.#state, points: updatePoint(payload, points)};
+        break;
+      case Store.POINT_DELETE:
+        this.#state = {...this.#state, points: deletePoint(payload, points)};
         break;
       case Store.MODE_CHANGE:
         this.#state = {...this.#state, mode: payload};

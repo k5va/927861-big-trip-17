@@ -68,6 +68,24 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   /**
+   * Sets delete point handler
+   * @param {Function} handler - handler
+   */
+  setDeleteHandler(handler) {
+    this._callback.delete = handler;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteHandler);
+  }
+
+  /**
+   * Handler for delete
+   * @param {Event} evt - event object
+   */
+  #deleteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.delete?.(this.#mapStateToPoint());
+  };
+
+  /**
    * Resets view
    * @param {Point} point - point data
    * @param {Array<Destination>} destinations - available destinations
