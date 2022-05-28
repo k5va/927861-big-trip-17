@@ -3,7 +3,7 @@ import { NoPointsView, PointListView } from '../../view';
 import { NoPointsMessage } from '../../const';
 import { PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
-import Store from '../../store/store';
+import { Actions } from '../../store';
 
 export default class RoutePresenter extends AbstractPresenter {
   #pointListView = new PointListView();
@@ -15,13 +15,14 @@ export default class RoutePresenter extends AbstractPresenter {
   /**
    * Creates new instance of presenter
    * @param {HTMLElement} container - HTML container
+   * @param {Store} store - store
    */
-  constructor(container) {
-    super();
+  constructor(container, store) {
+    super(store);
 
     this.#container = container;
     this._appStore.addObserver(this.#changeStoreHandler);
-    this.#sortingPresenter = new SortingPresenter(this.#container);
+    this.#sortingPresenter = new SortingPresenter(this.#container, this._appStore);
   }
 
   /**
@@ -51,7 +52,7 @@ export default class RoutePresenter extends AbstractPresenter {
     const {points, filter, sorting} = this._appStore.state;
     render(this.#pointListView, this.#container);
     for (const point of sortPoints(filterPoints(points, filter), sorting)) {
-      const pointPresenter = new PointPresenter(this.#pointListView.element);
+      const pointPresenter = new PointPresenter(this.#pointListView.element, this._appStore);
       pointPresenter.init(point);
       this.#pointPresenters.set(point.id, pointPresenter);
     }
@@ -90,10 +91,10 @@ export default class RoutePresenter extends AbstractPresenter {
    */
   #changeStoreHandler = (event) => {
     switch (event) {
-      case Store.FILTER_CHANGE:
-      case Store.SORTING_CHANGE:
-      case Store.POINT_UPDATE:
-      case Store.POINT_DELETE:
+      case Actions.FILTER_CHANGE:
+      case Actions.SORTING_CHANGE:
+      case Actions.POINT_UPDATE:
+      case Actions.POINT_DELETE:
         this.#clearRoute();
         this.#renderRoute();
         break;

@@ -1,8 +1,8 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
-import Store from '../../store/store';
 import { AbstractPresenter } from '../../presenter';
 import { AppMode } from '../../const';
+import { Actions } from '../../store';
 
 const Mode = {
   VIEW: 'VIEW',
@@ -19,9 +19,10 @@ export default class PointPresenter extends AbstractPresenter {
   /**
    * Creates new instance of presenter
    * @param {HTMLElement} container
+   * @param {Store} store - store
    */
-  constructor(container) {
-    super();
+  constructor(container, store) {
+    super(store);
 
     this.#container = container;
     this._appStore.addObserver(this.#changeStoreHandler);
@@ -87,7 +88,7 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceViewToEdit() {
     replace(this.#editPointView, this.#pointView);
     this.#editPointView.activate();
-    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.EDIT_POINT);
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.EDIT_POINT);
     this.#mode = Mode.EDIT;
   }
 
@@ -97,7 +98,7 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceEditToView() {
     this.#editPointView.deactivate();
     replace(this.#pointView, this.#editPointView);
-    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
     this.#mode = Mode.VIEW;
   }
 
@@ -116,7 +117,7 @@ export default class PointPresenter extends AbstractPresenter {
    */
   #saveHandler = (point) => {
     this.#replaceEditToView();
-    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
+    this._appStore.dispatch(Actions.POINT_UPDATE, {...point});
   };
 
   /**
@@ -124,8 +125,7 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {Point} point - point
    */
   #deleteHandler = (point) => {
- //   this.#replaceEditToView();
-    this._appStore.dispatch(Store.POINT_DELETE, point.id);
+    this._appStore.dispatch(Actions.POINT_DELETE, point.id);
   };
 
   /**
@@ -140,7 +140,7 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {Point} point - updated point
    */
   #favoritesHandler = (point) => {
-    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
+    this._appStore.dispatch(Actions.POINT_UPDATE, {...point});
   };
 
   /**
@@ -148,7 +148,7 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {String} event - event
    */
   #changeStoreHandler = (event, payload) => {
-    if (event === Store.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
+    if (event === Actions.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
       this.#resetView();
     }
   };

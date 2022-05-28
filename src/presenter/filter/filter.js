@@ -1,7 +1,7 @@
 import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
 import { Filter, PointFilter } from '../../const';
-import Store from '../../store/store';
+import Store from '../../store/store/store';
 import { AbstractPresenter } from '../../presenter';
 
 export default class FilterPresenter extends AbstractPresenter {
@@ -10,10 +10,11 @@ export default class FilterPresenter extends AbstractPresenter {
 
   /**
    * Creates new instance of presenter
-   * @param {HTMLElement} container
+   * @param {HTMLElement} container - DOM container
+   * @param {Store} store - store
    */
-  constructor(container) {
-    super();
+  constructor(container, store) {
+    super(store);
 
     this.#container = container;
   }

@@ -1,15 +1,14 @@
-import Store from '../../store/store';
-
 export default class AbstractPresenter {
-  _appStore = Store.getInstance();
-  _api = null;
+  _appStore = null;
 
   /**
    * Creates new instance of presenter
    */
-  constructor() {
+  constructor(store) {
     if (new.target === AbstractPresenter) {
       throw new Error('Can\'t instantiate AbstractView, only concrete one.');
     }
+
+    this._appStore = store;
   }
 }
