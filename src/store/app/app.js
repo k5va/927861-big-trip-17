@@ -1,6 +1,7 @@
 import Actions from './actions';
-import { DEFAULT_SORTING, DEFAULT_FILTER, AppMode } from '../../../const';
-import { updatePoint, deletePoint, addPoint } from '../../../utils';
+import { DEFAULT_SORTING, DEFAULT_FILTER, AppMode } from '../../const';
+import { updatePoint, deletePoint, addPoint } from '../../utils';
+import Store from '../store/store';
 
 const initialState = {
   points: [],
@@ -11,7 +12,7 @@ const initialState = {
   mode: AppMode.PENDING,
 };
 
-const dataReducer = (state = initialState, action, payload) => {
+const reducer = (state = initialState, action, payload) => {
   switch (action) {
     case Actions.FILTER_CHANGE:
       return {...state, filter: payload, sorting: DEFAULT_SORTING};
@@ -38,4 +39,6 @@ const dataReducer = (state = initialState, action, payload) => {
   }
 };
 
-export default dataReducer;
+const appStore = new Store(reducer);
+
+export default appStore;

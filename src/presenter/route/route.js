@@ -20,18 +20,17 @@ export default class RoutePresenter extends AbstractPresenter {
    * Creates new instance of presenter
    * @param {HTMLElement} routeContainer - HTML container
    * @param {HTMLElement} headContainer - HTML container
-   * @param {Store} store - store
    */
-  constructor(routeContainer, headContainer, store) {
-    super(store);
+  constructor(routeContainer, headContainer) {
+    super();
 
     this.#routeContainer = routeContainer;
     this.#headContainer = headContainer;
 
     this._appStore.addObserver(this.#changeStoreHandler);
 
-    this.#filterPresenter = new FilterPresenter(headContainer, this._appStore);
-    this.#sortingPresenter = new SortingPresenter(this.#routeContainer, this._appStore);
+    this.#filterPresenter = new FilterPresenter(headContainer);
+    this.#sortingPresenter = new SortingPresenter(this.#routeContainer);
   }
 
   /**
@@ -72,7 +71,7 @@ export default class RoutePresenter extends AbstractPresenter {
     const {points, filter, sorting} = this._appStore.state;
     render(this.#pointListView, this.#routeContainer);
     for (const point of sortPoints(filterPoints(points, filter), sorting)) {
-      const pointPresenter = new PointPresenter(this.#pointListView.element, this._appStore);
+      const pointPresenter = new PointPresenter(this.#pointListView.element);
       pointPresenter.init(point);
       this.#pointPresenters.set(point.id, pointPresenter);
     }
@@ -155,7 +154,7 @@ export default class RoutePresenter extends AbstractPresenter {
    */
   #addNewPointHandler = () => {
     this._appStore.dispatch(Actions.FILTER_CHANGE, DEFAULT_FILTER);
-    const addPointPresenter = new AddPointPresenter(this.#pointListView.element, this._appStore);
+    const addPointPresenter = new AddPointPresenter(this.#pointListView.element);
     addPointPresenter.init();
   };
 }

@@ -13,10 +13,9 @@ export default class AddPointPresenter extends AbstractPresenter {
   /**
    * Creates new instance of presenter
    * @param {HTMLElement} container
-   * @param {Store} store
    */
-  constructor(container, store) {
-    super(store);
+  constructor(container) {
+    super();
 
     this.#container = container;
     this._appStore.addObserver(this.#changeStoreHandler);

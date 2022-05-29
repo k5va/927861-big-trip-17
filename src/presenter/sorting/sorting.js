@@ -11,10 +11,9 @@ export default class SortingPresenter extends AbstractPresenter {
   /**
    * Creates new instance of presenter
    * @param {HTMLElement} container - DOM container
-   * @param {Store} store - store
    */
-  constructor(container, store) {
-    super(store);
+  constructor(container) {
+    super();
 
     this.#container = container;
   }
