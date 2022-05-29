@@ -1,34 +1,44 @@
 import { remove, render } from '../../framework/render';
-import { NoPointsView, PointListView } from '../../view';
+import { NoPointsView, PointListView, AddPointButtonView } from '../../view';
 import { AppMode, NoPointsMessage } from '../../const';
-import { PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
+import { FilterPresenter, PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
 import { Actions } from '../../store';
 
 export default class RoutePresenter extends AbstractPresenter {
   #pointListView = new PointListView();
   #noPointsView = null;
-  #container = null;
+  #routeContainer = null;
+  #headContainer = null;
   #pointPresenters = new Map();
   #sortingPresenter = null;
+  #addPointButtonView = new AddPointButtonView();
+  #filterPresenter = null;
 
   /**
    * Creates new instance of presenter
-   * @param {HTMLElement} container - HTML container
+   * @param {HTMLElement} routeContainer - HTML container
+   * @param {HTMLElement} headContainer - HTML container
    * @param {Store} store - store
    */
-  constructor(container, store) {
+  constructor(routeContainer, headContainer, store) {
     super(store);
 
-    this.#container = container;
+    this.#routeContainer = routeContainer;
+    this.#headContainer = headContainer;
+
     this._appStore.addObserver(this.#changeStoreHandler);
-    this.#sortingPresenter = new SortingPresenter(this.#container, this._appStore);
+
+    this.#filterPresenter = new FilterPresenter(headContainer, this._appStore);
+    this.#sortingPresenter = new SortingPresenter(this.#routeContainer, this._appStore);
   }
 
   /**
    * Renders points
    */
   init() {
+    this.#filterPresenter.init();
+    render(this.#addPointButtonView, this.#headContainer);
     this.#renderRoute();
   }
 
@@ -57,7 +67,7 @@ export default class RoutePresenter extends AbstractPresenter {
    */
   #renderPoints() {
     const {points, filter, sorting} = this._appStore.state;
-    render(this.#pointListView, this.#container);
+    render(this.#pointListView, this.#routeContainer);
     for (const point of sortPoints(filterPoints(points, filter), sorting)) {
       const pointPresenter = new PointPresenter(this.#pointListView.element, this._appStore);
       pointPresenter.init(point);
@@ -78,7 +88,7 @@ export default class RoutePresenter extends AbstractPresenter {
   #renderNoPoints() {
     const {filter} = this._appStore.state;
     this.#noPointsView = new NoPointsView(NoPointsMessage[filter]);
-    render(this.#noPointsView, this.#container);
+    render(this.#noPointsView, this.#routeContainer);
   }
 
   /**
@@ -86,7 +96,7 @@ export default class RoutePresenter extends AbstractPresenter {
    */
   #renderLoading() {
     this.#noPointsView = new NoPointsView(NoPointsMessage.LOADING); //TODO: disable create button
-    render(this.#noPointsView, this.#container);
+    render(this.#noPointsView, this.#routeContainer);
   }
 
   /**
