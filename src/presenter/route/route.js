@@ -1,7 +1,8 @@
 import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView, AddPointButtonView } from '../../view';
 import { AppMode, NoPointsMessage } from '../../const';
-import { FilterPresenter, PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
+import { AddPointPresenter, FilterPresenter, PointPresenter,
+  SortingPresenter, AbstractPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
 import { Actions } from '../../store';
 
@@ -39,6 +40,8 @@ export default class RoutePresenter extends AbstractPresenter {
   init() {
     this.#filterPresenter.init();
     render(this.#addPointButtonView, this.#headContainer);
+    this.#addPointButtonView.setClickHandler(this.#addNewPointHandler);
+
     this.#renderRoute();
   }
 
@@ -95,7 +98,7 @@ export default class RoutePresenter extends AbstractPresenter {
    * Renders Loading message
    */
   #renderLoading() {
-    this.#noPointsView = new NoPointsView(NoPointsMessage.LOADING); //TODO: disable create button
+    this.#noPointsView = new NoPointsView(NoPointsMessage.LOADING);
     render(this.#noPointsView, this.#routeContainer);
   }
 
@@ -120,10 +123,22 @@ export default class RoutePresenter extends AbstractPresenter {
       case Actions.SORTING_CHANGE:
       case Actions.POINT_UPDATE:
       case Actions.POINT_DELETE:
+        this.#clearRoute();
+        this.#renderRoute();
+        break;
       case Actions.DATA_LOADED:
+        this.#addPointButtonView.enable();
         this.#clearRoute();
         this.#renderRoute();
         break;
     }
+  };
+
+  /**
+   * Handles add new point
+   */
+  #addNewPointHandler = () => {
+    const addPointPresenter = new AddPointPresenter(this.#pointListView.element, this._appStore);
+    addPointPresenter.init();
   };
 }
