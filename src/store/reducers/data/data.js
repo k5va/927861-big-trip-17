@@ -8,7 +8,7 @@ const initialState = {
   destinations: [],
   filter: DEFAULT_FILTER,
   sorting: DEFAULT_SORTING,
-  mode: AppMode.READY,
+  mode: AppMode.PENDING,
 };
 
 const dataReducer = (state = initialState, action, payload) => {
@@ -26,6 +26,7 @@ const dataReducer = (state = initialState, action, payload) => {
     case Actions.DATA_LOADED:
       return {
         ...state,
+        mode: AppMode.READY,
         points: payload.points,
         offers: payload.offers,
         destinations: payload.destinations

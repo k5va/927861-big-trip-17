@@ -1,6 +1,6 @@
 import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView } from '../../view';
-import { NoPointsMessage } from '../../const';
+import { AppMode, NoPointsMessage } from '../../const';
 import { PointPresenter, SortingPresenter, AbstractPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
 import { Actions } from '../../store';
@@ -36,13 +36,20 @@ export default class RoutePresenter extends AbstractPresenter {
    * Renders route with filters and sorting
    */
   #renderRoute() {
-    const {points} = this._appStore.state;
-    if (points.length > 0) {
-      this.#renderSorting();
-      this.#renderPoints();
-    } else {
-      this.#renderNoPoints();
+    const {points, mode} = this._appStore.state;
+
+    if (mode === AppMode.PENDING) {
+      this.#renderLoading();
+      return;
     }
+
+    if (points.length === 0) {
+      this.#renderNoPoints();
+      return;
+    }
+
+    this.#renderSorting();
+    this.#renderPoints();
   }
 
   /**
@@ -75,6 +82,14 @@ export default class RoutePresenter extends AbstractPresenter {
   }
 
   /**
+   * Renders Loading message
+   */
+  #renderLoading() {
+    this.#noPointsView = new NoPointsView(NoPointsMessage.LOADING); //TODO: disable create button
+    render(this.#noPointsView, this.#container);
+  }
+
+  /**
    * Clears points list and destroys all point presenters
    */
   #clearRoute() {
@@ -95,6 +110,7 @@ export default class RoutePresenter extends AbstractPresenter {
       case Actions.SORTING_CHANGE:
       case Actions.POINT_UPDATE:
       case Actions.POINT_DELETE:
+      case Actions.DATA_LOADED:
         this.#clearRoute();
         this.#renderRoute();
         break;
