@@ -117,7 +117,7 @@ export default class RoutePresenter extends AbstractPresenter {
    * Change store handler
    * @param {String} event - event
    */
-  #changeStoreHandler = (event) => {
+  #changeStoreHandler = (event, payload) => {
     switch (event) {
       case Actions.FILTER_CHANGE:
       case Actions.SORTING_CHANGE:
@@ -131,8 +131,23 @@ export default class RoutePresenter extends AbstractPresenter {
         this.#clearRoute();
         this.#renderRoute();
         break;
+      case Actions.MODE_CHANGE:
+        this.#handleChangeMode(payload);
+        break;
     }
   };
+
+  #handleChangeMode(mode) {
+    switch (mode) {
+      case AppMode.READY:
+      case AppMode.EDIT_POINT:
+        this.#addPointButtonView.enable();
+        break;
+      case AppMode.ADD_POINT:
+        this.#addPointButtonView.enable(false);
+        break;
+    }
+  }
 
   /**
    * Handles add new point

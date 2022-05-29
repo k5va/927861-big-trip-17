@@ -98,7 +98,6 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceEditToView() {
     this.#editPointView.deactivate();
     replace(this.#pointView, this.#editPointView);
-    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
     this.#mode = Mode.VIEW;
   }
 
@@ -109,6 +108,7 @@ export default class PointPresenter extends AbstractPresenter {
     const {offers, destinations} = this._appStore.state;
     this.#editPointView.reset(this.#point, offers, destinations);
     this.#replaceEditToView();
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
   };
 
   /**
@@ -117,6 +117,7 @@ export default class PointPresenter extends AbstractPresenter {
    */
   #saveHandler = (point) => {
     this.#replaceEditToView();
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
     this._appStore.dispatch(Actions.POINT_UPDATE, {...point});
   };
 
@@ -148,7 +149,8 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {String} event - event
    */
   #changeStoreHandler = (event, payload) => {
-    if (event === Actions.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
+    if (event === Actions.MODE_CHANGE &&
+      (payload === AppMode.EDIT_POINT || payload === AppMode.ADD_POINT)) {
       this.#resetView();
     }
   };

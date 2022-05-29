@@ -1,9 +1,9 @@
 import { EditPointView } from '../../view';
 import { render, remove, RenderPosition } from '../../framework/render';
-import Store from '../../store/store/store';
 import { AbstractPresenter } from '../../presenter';
 import { AppMode } from '../../const';
 import { Point } from '../../model';
+import { Actions } from '../../store';
 
 export default class AddPointPresenter extends AbstractPresenter {
   #editPointView = null;
@@ -34,7 +34,7 @@ export default class AddPointPresenter extends AbstractPresenter {
 
     render(this.#editPointView, this.#container, RenderPosition.AFTERBEGIN);
     this.#editPointView.activate();
-    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.ADD_POINT);
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.ADD_POINT);
   }
 
   /**
@@ -43,7 +43,7 @@ export default class AddPointPresenter extends AbstractPresenter {
   #closeHandler = () => {
     this.#editPointView.deactivate();
     remove(this.#editPointView);
-    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
   };
 
   /**
@@ -52,7 +52,7 @@ export default class AddPointPresenter extends AbstractPresenter {
    */
   #saveHandler = (point) => {
     //TODO: generate id temporary
-    this._appStore.dispatch(Store.POINT_ADD, {...point});
+    this._appStore.dispatch(Actions.POINT_ADD, {...point});
   };
 
   /**
@@ -60,7 +60,7 @@ export default class AddPointPresenter extends AbstractPresenter {
    * @param {String} event - event
    */
   #changeStoreHandler = (event, payload) => {
-    if (event === Store.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
+    if (event === Actions.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
       this.#editPointView.deactivate();
       remove(this.#editPointView);
     }
