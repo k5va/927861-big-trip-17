@@ -1,11 +1,9 @@
 /**
  * Creates filters template
- * @param {String} activeFilter - active filter
- * @param {Array<String>} filters - array of available filters
- * @param {Array<String>} disabled - array of disabled filters
+ * @param {*} state - view's state
  * @returns {String} template
  */
-const createFiltersTemplate = (activeFilter, filters, disabled) =>
+const createFiltersTemplate = ({activeFilter, filters, disabled}) =>
   `<div class="trip-main__trip-controls  trip-controls">
     <div class="trip-controls__filters">
       <h2 class="visually-hidden">Filter events</h2>
