@@ -37,7 +37,8 @@ const createEditPointTemplate = (state) => {
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">${type}</label>
           <input class="event__input  event__input--destination" id="event-destination-1"
-            type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
+            type="text" name="event-destination"
+            value="${currentDestination ? currentDestination.name : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${createDestinationsTemplate(allDestinations)}
           </datalist>
@@ -74,12 +75,12 @@ const createEditPointTemplate = (state) => {
 
           <div class="event__available-offers">${createOffersTemplate(offers, filteredOffers)}</div>
         </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${currentDestination.description}</p>
-          ${createPicturesTemplate(currentDestination.pictures)}
-        </section>
+    ${currentDestination ? `
+      <section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${currentDestination.description}</p>
+        ${createPicturesTemplate(currentDestination.pictures)}
+      </section>` : ''}
       </section>
     </form>
   </li>`;
