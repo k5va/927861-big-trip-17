@@ -1,6 +1,6 @@
 import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView, AddPointButtonView } from '../../view';
-import { AppMode, NoPointsMessage } from '../../const';
+import { AppMode, DEFAULT_FILTER, NoPointsMessage } from '../../const';
 import { AddPointPresenter, FilterPresenter, PointPresenter,
   SortingPresenter, AbstractPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
@@ -153,6 +153,7 @@ export default class RoutePresenter extends AbstractPresenter {
    * Handles add new point
    */
   #addNewPointHandler = () => {
+    this._appStore.dispatch(Actions.FILTER_CHANGE, DEFAULT_FILTER);
     const addPointPresenter = new AddPointPresenter(this.#pointListView.element, this._appStore);
     addPointPresenter.init();
   };

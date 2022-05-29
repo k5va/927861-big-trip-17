@@ -1,6 +1,6 @@
 import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
-import { Filter, PointFilter } from '../../const';
+import { AppMode, Filter, PointFilter } from '../../const';
 import { AbstractPresenter } from '../../presenter';
 import { Actions } from '../../store';
 
@@ -56,7 +56,7 @@ export default class FilterPresenter extends AbstractPresenter {
    * Change store handler
    * @param {String} event - event
    */
-  #changeStoreHandler = (event) => {
+  #changeStoreHandler = (event, payload) => {
     switch (event) {
       case Actions.POINT_UPDATE:
       case Actions.POINT_DELETE:
@@ -64,6 +64,24 @@ export default class FilterPresenter extends AbstractPresenter {
       case Actions.DATA_LOADED:
         this.#filtersView.updateElement({disabled: this.#generateDisabledFilters()});
         break;
+      case Actions.FILTER_CHANGE:
+        this.#filtersView.updateElement({activeFilter: payload});
+        break;
+      case Actions.MODE_CHANGE:
+        this.#handleChangeMode(payload);
+        break;
     }
   };
+
+  #handleChangeMode(mode) {
+    switch (mode) {
+      case AppMode.READY:
+        this.#filtersView.updateElement({disabled: this.#generateDisabledFilters()});
+        break;
+      case AppMode.EDIT_POINT:
+      case AppMode.ADD_POINT:
+        this.#filtersView.updateElement({disabled: Object.values(Filter)});
+        break;
+    }
+  }
 }
