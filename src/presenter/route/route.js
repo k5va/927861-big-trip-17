@@ -123,6 +123,7 @@ export default class RoutePresenter extends AbstractPresenter {
       case Actions.SORTING_CHANGE:
       case Actions.POINT_UPDATE:
       case Actions.POINT_DELETE:
+      case Actions.POINT_ADD:
         this.#clearRoute();
         this.#renderRoute();
         break;

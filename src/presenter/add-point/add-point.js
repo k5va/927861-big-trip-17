@@ -4,6 +4,7 @@ import { AbstractPresenter } from '../../presenter';
 import { AppMode } from '../../const';
 import { Point } from '../../model';
 import { Actions } from '../../store';
+import {nanoid} from 'nanoid';
 
 export default class AddPointPresenter extends AbstractPresenter {
   #editPointView = null;
@@ -51,8 +52,10 @@ export default class AddPointPresenter extends AbstractPresenter {
    * @param {Point} point - updated point
    */
   #saveHandler = (point) => {
-    //TODO: generate id temporary
-    this._appStore.dispatch(Actions.POINT_ADD, {...point});
+    //TODO: remove temporary ID generation
+    this._appStore.dispatch(Actions.POINT_ADD, {...point, id: nanoid()});
+    remove(this.#editPointView);
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
   };
 
   /**

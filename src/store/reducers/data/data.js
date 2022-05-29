@@ -1,6 +1,6 @@
 import Actions from './actions';
 import { DEFAULT_SORTING, DEFAULT_FILTER, AppMode } from '../../../const';
-import { updatePoint, deletePoint } from '../../../utils';
+import { updatePoint, deletePoint, addPoint } from '../../../utils';
 
 const initialState = {
   points: [],
@@ -21,6 +21,8 @@ const dataReducer = (state = initialState, action, payload) => {
       return {...state, points: updatePoint(payload, state.points)};
     case Actions.POINT_DELETE:
       return {...state, points: deletePoint(payload, state.points)};
+    case Actions.POINT_ADD:
+      return {...state, points: addPoint(payload, state.points)};
     case Actions.MODE_CHANGE:
       return {...state, mode: payload};
     case Actions.DATA_LOADED:
