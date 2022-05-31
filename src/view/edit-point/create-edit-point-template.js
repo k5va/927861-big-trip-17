@@ -62,7 +62,7 @@ const createEditPointTemplate = (state) => {
             &euro;
           </label>
           <input class="event__input  event__input--price" id="event-price-1"
-            type="text" name="event-price" value="${bestPrice}">
+            type="number" name="event-price" value="${bestPrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">
