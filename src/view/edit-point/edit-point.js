@@ -223,7 +223,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #inputPriceHandler = (evt) => {
     evt.preventDefault();
-    this._setState({bestPrice: evt.target.value});
+    this._setState({bestPrice: Number(evt.target.value)});
   };
 
   /**
