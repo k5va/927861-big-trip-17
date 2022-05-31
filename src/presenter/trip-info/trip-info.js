@@ -23,14 +23,7 @@ export default class TripInfoPresenter extends AbstractPresenter {
    * Renders filter
    */
   init() {
-    const points = sortPoints(this._appStore.state.points);
-    this.#tripInfoView = new TripInfoView(
-      this.#generateDestinations(points),
-      this.#calculateStartDate(points),
-      this.#calculateEndDate(points),
-      this.#calculateCost(points)
-    );
-    render(this.#tripInfoView, this.#container);
+    this.#updateView();
   }
 
   /**
@@ -60,7 +53,11 @@ export default class TripInfoPresenter extends AbstractPresenter {
       this.#calculateEndDate(points),
       this.#calculateCost(points)
     );
-    replace(this.#tripInfoView, prevTripInfoView);
+    if (prevTripInfoView) {
+      replace(this.#tripInfoView, prevTripInfoView);
+    } else {
+      render(this.#tripInfoView, this.#container);
+    }
   }
 
   /**
