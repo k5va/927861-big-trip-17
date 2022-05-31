@@ -2,7 +2,7 @@ import { render, replace } from '../../framework/render';
 import { TripInfoView } from '../../view';
 import { AbstractPresenter } from '../../presenter';
 import { Actions } from '../../store';
-import { sortPoints } from '../../utils';
+import { filterOffers, sortPoints } from '../../utils';
 
 export default class TripInfoPresenter extends AbstractPresenter {
   #tripInfoView = null;
@@ -78,7 +78,13 @@ export default class TripInfoPresenter extends AbstractPresenter {
    * @returns {Number} - total cost
    */
   #calculateCost(points) {
-    return points.map(({bestPrice}) => bestPrice).reduce((prev, current) => prev + current, 0);
+    let cost = 0;
+    for (const {type, bestPrice, offers} of points) {
+      cost += bestPrice + filterOffers(this._appStore.state.offers, type, offers)
+        .reduce(((sum, {price}) => sum + price), 0);
+    }
+
+    return cost;
   }
 
   /**
