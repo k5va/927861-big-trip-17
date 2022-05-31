@@ -1,5 +1,5 @@
 import { comparePointsByDay, comparePointsByPrice, comparePointsByTime } from '../../utils';
-import { Sorting } from '../../const';
+import { DEFAULT_SORTING, Sorting } from '../../const';
 
 /**
  * Sorts points
@@ -7,7 +7,7 @@ import { Sorting } from '../../const';
  * @param {String} sorting - sorting
  * @returns {Array<Point>} - points array
  */
-const sortPoints = (points, sorting) => {
+const sortPoints = (points, sorting = DEFAULT_SORTING) => {
   switch (sorting) {
     case Sorting.DAY:
       return [...points].sort(comparePointsByDay);

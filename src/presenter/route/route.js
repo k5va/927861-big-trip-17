@@ -2,7 +2,7 @@ import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView, AddPointButtonView } from '../../view';
 import { AppMode, DEFAULT_FILTER, NoPointsMessage } from '../../const';
 import { AddPointPresenter, FilterPresenter, PointPresenter,
-  SortingPresenter, AbstractPresenter } from '../../presenter';
+  SortingPresenter, AbstractPresenter, TripInfoPresenter } from '../../presenter';
 import { filterPoints, sortPoints } from '../../utils';
 import { Actions } from '../../store';
 
@@ -15,6 +15,7 @@ export default class RoutePresenter extends AbstractPresenter {
   #sortingPresenter = null;
   #addPointButtonView = new AddPointButtonView();
   #filterPresenter = null;
+  #tripInfoPresenter = null;
 
   /**
    * Creates new instance of presenter
@@ -29,6 +30,7 @@ export default class RoutePresenter extends AbstractPresenter {
 
     this._appStore.addObserver(this.#changeStoreHandler);
 
+    this.#tripInfoPresenter = new TripInfoPresenter(headContainer);
     this.#filterPresenter = new FilterPresenter(headContainer);
     this.#sortingPresenter = new SortingPresenter(this.#routeContainer);
   }
@@ -37,6 +39,7 @@ export default class RoutePresenter extends AbstractPresenter {
    * Renders points
    */
   init() {
+    this.#tripInfoPresenter.init();
     this.#filterPresenter.init();
     render(this.#addPointButtonView, this.#headContainer);
     this.#addPointButtonView.setClickHandler(this.#addNewPointHandler);
