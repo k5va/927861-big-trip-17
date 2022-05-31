@@ -1,4 +1,5 @@
 import {createElement} from '../render.js';
+import UiBlocker from '../ui-blocker/ui-blocker.js';
 import './abstract-view.css';
 
 /** @const {string} Класс, реализующий эффект "покачивания головой" */
@@ -16,6 +17,8 @@ export default class AbstractView {
 
   /** @type {Object} Объект с колбэками. Может использоваться для хранения обработчиков событий */
   _callback = {};
+
+  #uiBlocker = new UiBlocker(0, 0);
 
   constructor() {
     if (new.target === AbstractView) {
@@ -59,6 +62,14 @@ export default class AbstractView {
       this.element.classList.remove(SHAKE_CLASS_NAME);
       callback?.();
     }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  block() {
+    this.#uiBlocker.block();
+  }
+
+  unblock() {
+    this.#uiBlocker.unblock();
   }
 }
 

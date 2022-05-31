@@ -1,7 +1,9 @@
+import API from '../../api/api';
 import { appStore } from '../../store';
 
 export default class AbstractPresenter {
-  _appStore = null;
+  _appStore = appStore;
+  _api = API.getInstance();
 
   /**
    * Creates new instance of presenter
@@ -10,7 +12,5 @@ export default class AbstractPresenter {
     if (new.target === AbstractPresenter) {
       throw new Error('Can\'t instantiate AbstractView, only concrete one.');
     }
-
-    this._appStore = appStore;
   }
 }

@@ -4,6 +4,7 @@ import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createEditPointTemplate } from './create-edit-point-template';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import EditPointMode from './edit-point-mode';
 
 export default class EditPointView extends AbstractStatefulView {
   #dateFromPicker = null;
@@ -14,11 +15,12 @@ export default class EditPointView extends AbstractStatefulView {
    * @param {Point} point - point data
    * @param {Array<Destination>} destinations - available destinations
    * @param {Object} offers - available offers
+   * @param {Boolean} isEditPoint - true if edit point, false if add point
    */
-  constructor(point, offers, destinations) {
+  constructor(point, offers, destinations, isEditPoint = true) {
     super();
 
-    this._state = this.#mapPointToState(point, offers, destinations);
+    this._state = this.#mapPointToState(point, offers, destinations, isEditPoint);
     this.#setInnerHandlers();
     this.#setDatePickers();
   }
@@ -46,6 +48,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #saveHandler = (evt) => {
     evt.preventDefault();
+    this.updateElement({mode: EditPointMode.SAVING});
     this._callback.save?.(this.#mapStateToPoint());
   };
 
@@ -55,7 +58,9 @@ export default class EditPointView extends AbstractStatefulView {
    */
   setCloseHandler(handler) {
     this._callback.close = handler;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeHandler);
+    if (this._state.isEditPoint) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeHandler);
+    }
   }
 
   /**
@@ -82,6 +87,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #deleteHandler = (evt) => {
     evt.preventDefault();
+    this.updateElement({mode: EditPointMode.DELETING});
     this._callback.delete?.(this.#mapStateToPoint());
   };
 
@@ -127,6 +133,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.#setDatePickers();
     this.setSaveHandler(this._callback.save);
     this.setCloseHandler(this._callback.close);
+    this.setDeleteHandler(this._callback.delete);
   };
 
   /**
@@ -134,7 +141,7 @@ export default class EditPointView extends AbstractStatefulView {
    * @param {Point} point
    * @returns {Object} state
    */
-  #mapPointToState(point, offers, destinations) {
+  #mapPointToState(point, offers, destinations, isEditPoint) {
     return {
       ...point,
       pointTypes: Object.values(PointType),
@@ -142,6 +149,8 @@ export default class EditPointView extends AbstractStatefulView {
       allDestinations: [...destinations],
       filteredOffers: filterOffers(offers, point.type),
       allOffers: offers,
+      isEditPoint,
+      mode: EditPointMode.NORMAL,
     };
   }
 
@@ -157,6 +166,8 @@ export default class EditPointView extends AbstractStatefulView {
     delete point.currentDestination;
     delete point.allDestinations;
     delete point.filterOffers;
+    delete point.isEditPoint;
+    delete point.mode;
 
     return point;
   }
@@ -269,4 +280,9 @@ export default class EditPointView extends AbstractStatefulView {
     this.#dateToPicker?.destroy();
     this.#dateToPicker = null;
   };
+
+  unblock() {
+    this.updateElement({mode: EditPointMode.NORMAL});
+    super.unblock();
+  }
 }

@@ -3,6 +3,8 @@ import { createPointTypesTemplate } from './create-point-types-template';
 import { createOffersTemplate } from './create-offers-template';
 import { createPicturesTemplate } from './create-pictures-template';
 import { createDestinationsTemplate } from './create-destinations-template';
+import EditPointMode from './edit-point-mode';
+import { createResetButtonTemplate } from './create-reset-button-template';
 
 /**
  * Creates edit event template
@@ -10,7 +12,7 @@ import { createDestinationsTemplate } from './create-destinations-template';
  * @returns {String} template
  */
 const createEditPointTemplate = (state) => {
-  const {type, dateFrom, dateTo, offers, pointTypes,
+  const {type, dateFrom, dateTo, offers, pointTypes, isEditPoint, mode,
     bestPrice, currentDestination, allDestinations, filteredOffers} = state;
   const eventStartTime = formatDate(dateFrom, 'DD/MM/YY HH:mm');
   const eventEndTime = formatDate(dateTo, 'DD/MM/YY HH:mm');
@@ -63,11 +65,14 @@ const createEditPointTemplate = (state) => {
             type="text" name="event-price" value="${bestPrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">
+          ${mode === EditPointMode.SAVING ? 'Saving...' : 'Save'}
+          </button>
+          ${createResetButtonTemplate(isEditPoint, mode)}
+        ${isEditPoint ? `
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>` : ''}
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">

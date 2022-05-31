@@ -4,7 +4,6 @@ import { AbstractPresenter } from '../../presenter';
 import { AppMode } from '../../const';
 import { Point } from '../../model';
 import { Actions } from '../../store';
-import {nanoid} from 'nanoid';
 
 export default class AddPointPresenter extends AbstractPresenter {
   #editPointView = null;
@@ -27,10 +26,11 @@ export default class AddPointPresenter extends AbstractPresenter {
   init() {
     const {offers, destinations} = this._appStore.state;
 
-    this.#editPointView = new EditPointView(Point.createBlank(), offers, destinations);
+    this.#editPointView = new EditPointView(Point.createBlank(), offers, destinations, false);
 
     this.#editPointView.setSaveHandler(this.#saveHandler);
     this.#editPointView.setCloseHandler(this.#closeHandler);
+    this.#editPointView.setDeleteHandler(this.#closeHandler);
 
     render(this.#editPointView, this.#container, RenderPosition.AFTERBEGIN);
     this.#editPointView.activate();
@@ -51,10 +51,13 @@ export default class AddPointPresenter extends AbstractPresenter {
    * @param {Point} point - updated point
    */
   #saveHandler = (point) => {
-    //TODO: remove temporary ID generation
-    this._appStore.dispatch(Actions.POINT_ADD, {...point, id: nanoid()});
-    remove(this.#editPointView);
-    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
+    this.#editPointView.block();
+    this._api.addPoint(point).then(() => {
+      this.#editPointView.unblock();
+      this._appStore.dispatch(Actions.POINT_ADD, point);
+      remove(this.#editPointView);
+      this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
+    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
   };
 
   /**

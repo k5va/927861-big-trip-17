@@ -115,9 +115,13 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {Point} point - updated point
    */
   #saveHandler = (point) => {
-    this.#replaceEditToView();
-    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
-    this._appStore.dispatch(Actions.POINT_UPDATE, {...point});
+    this.#editPointView.block();
+    this._api.updatePoint(point).then(() => {
+      this.#editPointView.unblock();
+      this.#replaceEditToView();
+      this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
+      this._appStore.dispatch(Actions.POINT_UPDATE, point);
+    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
   };
 
   /**
@@ -125,7 +129,11 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {Point} point - point
    */
   #deleteHandler = (point) => {
-    this._appStore.dispatch(Actions.POINT_DELETE, point.id);
+    this.#editPointView.block();
+    this._api.deletePoint(point).then(() => {
+      this.#editPointView.unblock();
+      this._appStore.dispatch(Actions.POINT_DELETE, point.id);
+    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
   };
 
   /**
