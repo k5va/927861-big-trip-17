@@ -49,11 +49,11 @@ const createEditPointTemplate = (state) => {
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
           <input class="event__input  event__input--time" id="event-start-time-1"
-            type="date" required name="event-start-time" value="${eventStartTime}">
+            type="text" required name="event-start-time" value="${eventStartTime}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
           <input class="event__input  event__input--time" id="event-end-time-1"
-            type="date" required name="event-end-time" value="${eventEndTime}">
+            type="text" required name="event-end-time" value="${eventEndTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

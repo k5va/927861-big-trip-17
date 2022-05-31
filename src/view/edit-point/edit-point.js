@@ -209,7 +209,11 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     const currentDestination = this._state.allDestinations.find(({name}) => name === evt.target.value);
     if (currentDestination) {
+      evt.target.setCustomValidity('');
       this.updateElement({destination: evt.target.value, currentDestination});
+    } else {
+      evt.target.setCustomValidity('Please enter valid destination');
+      evt.target.reportValidity();
     }
   };
 
@@ -246,11 +250,13 @@ export default class EditPointView extends AbstractStatefulView {
 
     this.#dateFromPicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
-      {...params, defaultDate: this._state.dateFrom, onChange: this.#changeDateFromHandler},
+      {...params, defaultDate: this._state.dateFrom, maxDate: this._state.dateTo,
+        onChange: this.#changeDateFromHandler},
     );
     this.#dateToPicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
-      {...params, defaultDate: this._state.dateTo, onChange: this.#changeDateToHandler},
+      {...params, defaultDate: this._state.dateTo, minDate: this._state.dateFrom,
+        onChange: this.#changeDateToHandler},
     );
   }
 
@@ -259,6 +265,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #changeDateFromHandler = ([userDate]) => {
     this._setState({dateFrom: userDate});
+    this.#dateToPicker.set('minDate', userDate);
   };
 
   /**
@@ -266,6 +273,7 @@ export default class EditPointView extends AbstractStatefulView {
    */
   #changeDateToHandler = ([userDate]) => {
     this._setState({dateTo: userDate});
+    this.#dateFromPicker.set('maxDate', userDate);
   };
 
   /**
