@@ -1,8 +1,8 @@
 import { remove, render } from '../../framework/render';
 import { Sorting, DISABLED_SORTINGS } from '../../const';
 import { SortView } from '../../view';
-import Store from '../../store/store';
 import { AbstractPresenter } from '../../presenter';
+import { Actions } from '../../store';
 
 export default class SortingPresenter extends AbstractPresenter {
   #sortingView = null;
@@ -10,7 +10,7 @@ export default class SortingPresenter extends AbstractPresenter {
 
   /**
    * Creates new instance of presenter
-   * @param {HTMLElement} container
+   * @param {HTMLElement} container - DOM container
    */
   constructor(container) {
     super();
@@ -35,7 +35,7 @@ export default class SortingPresenter extends AbstractPresenter {
   #changeSortingHandler = (newSorting) => {
     const {sorting} = this._appStore.state;
     if (newSorting !== sorting) {
-      this._appStore.dispatch(Store.SORTING_CHANGE, newSorting);
+      this._appStore.dispatch(Actions.SORTING_CHANGE, newSorting);
     }
   };
 

@@ -1,8 +1,9 @@
-import Store from '../../store/store';
+import API from '../../api/api';
+import { appStore } from '../../store';
 
 export default class AbstractPresenter {
-  _appStore = Store.getInstance();
-  _api = null;
+  _appStore = appStore;
+  _api = API.getInstance();
 
   /**
    * Creates new instance of presenter

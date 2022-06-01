@@ -1,8 +1,8 @@
 import { PointView, EditPointView } from '../../view';
 import { render, replace, remove } from '../../framework/render';
-import Store from '../../store/store';
 import { AbstractPresenter } from '../../presenter';
 import { AppMode } from '../../const';
+import { Actions } from '../../store';
 
 const Mode = {
   VIEW: 'VIEW',
@@ -44,6 +44,7 @@ export default class PointPresenter extends AbstractPresenter {
     this.#pointView.setEditHandler(this.#editHandler);
     this.#pointView.setFavoriteHandler(this.#favoritesHandler);
     this.#editPointView.setSaveHandler(this.#saveHandler);
+    this.#editPointView.setDeleteHandler(this.#deleteHandler);
     this.#editPointView.setCloseHandler(this.#closeHandler);
 
     if (!prevPointView || !prevEditPointView) {
@@ -86,7 +87,7 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceViewToEdit() {
     replace(this.#editPointView, this.#pointView);
     this.#editPointView.activate();
-    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.EDIT_POINT);
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.EDIT_POINT);
     this.#mode = Mode.EDIT;
   }
 
@@ -96,7 +97,6 @@ export default class PointPresenter extends AbstractPresenter {
   #replaceEditToView() {
     this.#editPointView.deactivate();
     replace(this.#pointView, this.#editPointView);
-    this._appStore.dispatch(Store.MODE_CHANGE, AppMode.READY);
     this.#mode = Mode.VIEW;
   }
 
@@ -107,6 +107,7 @@ export default class PointPresenter extends AbstractPresenter {
     const {offers, destinations} = this._appStore.state;
     this.#editPointView.reset(this.#point, offers, destinations);
     this.#replaceEditToView();
+    this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
   };
 
   /**
@@ -114,8 +115,25 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {Point} point - updated point
    */
   #saveHandler = (point) => {
-    this.#replaceEditToView();
-    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
+    this.#editPointView.block();
+    this._api.updatePoint(point).then(() => {
+      this.#editPointView.unblock();
+      this.#replaceEditToView();
+      this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
+      this._appStore.dispatch(Actions.POINT_UPDATE, point);
+    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
+  };
+
+  /**
+   * Delete handler
+   * @param {Point} point - point
+   */
+  #deleteHandler = (point) => {
+    this.#editPointView.block();
+    this._api.deletePoint(point).then(() => {
+      this.#editPointView.unblock();
+      this._appStore.dispatch(Actions.POINT_DELETE, point.id);
+    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
   };
 
   /**
@@ -130,7 +148,7 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {Point} point - updated point
    */
   #favoritesHandler = (point) => {
-    this._appStore.dispatch(Store.POINT_UPDATE, {...point});
+    this._appStore.dispatch(Actions.POINT_UPDATE, {...point});
   };
 
   /**
@@ -138,7 +156,8 @@ export default class PointPresenter extends AbstractPresenter {
    * @param {String} event - event
    */
   #changeStoreHandler = (event, payload) => {
-    if (event === Store.MODE_CHANGE && payload === AppMode.EDIT_POINT) {
+    if (event === Actions.MODE_CHANGE &&
+      (payload === AppMode.EDIT_POINT || payload === AppMode.ADD_POINT)) {
       this.#resetView();
     }
   };

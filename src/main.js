@@ -1,23 +1,11 @@
-import { Point, Offer } from './model';
-import Store from './store/store';
-import { FilterPresenter, RoutePresenter } from './presenter';
-import { render } from './framework/render';
-import { AddPointButtonView} from './view';
-import { generateOffers } from './mock/generate-offers';
-import { generateDestinations } from './mock/generate-destinations';
-import { generatePoints } from './mock/generate-points';
+import { RoutePresenter } from './presenter';
+import { appStore, Actions } from './store';
+import API from './api/api';
 
-const tripContainer = document.querySelector('.trip-main');
+const api = API.getInstance();
+const headContainer = document.querySelector('.trip-main');
 const routeContainer = document.querySelector('.trip-events');
-const addPointButtonView = new AddPointButtonView();
+const routePresenter = new RoutePresenter(routeContainer, headContainer);
 
-Store.init(
-  Point.parseAll(generatePoints()), Offer.parseAll(generateOffers()), generateDestinations()
-);
-
-const routePresenter = new RoutePresenter(routeContainer);
-const filterPresenter = new FilterPresenter(tripContainer);
-
-filterPresenter.init();
-render(addPointButtonView, tripContainer);
+api.loadData().then((data) => appStore.dispatch(Actions.DATA_LOADED, data));
 routePresenter.init();

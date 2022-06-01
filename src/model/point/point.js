@@ -1,3 +1,5 @@
+import { PointType } from '../../const';
+
 export default class Point {
 
   /**
@@ -12,7 +14,7 @@ export default class Point {
     this.bestPrice = Number(data['base_price']);
     this.isFavorite = Boolean(data['is_favorite']);
     this.offers = data['offers'] ? data['offers'].map((offer) => String(offer['id'])) : [];
-    this.destination = data['destination']['name'];
+    this.destination = data['destination']?.['name'];
   }
 
   /**
@@ -31,5 +33,19 @@ export default class Point {
    */
   static parseAll(data) {
     return data.map(Point.parse);
+  }
+
+  /**
+   * Creates blank point
+   * @return {Point} - blank point
+   */
+  static createBlank() {
+    return new Point({
+      id: '',
+      type: PointType.TAXI,
+      'date_from': new Date(),
+      'date_to': new Date(),
+      'base_price': 0,
+    });
   }
 }

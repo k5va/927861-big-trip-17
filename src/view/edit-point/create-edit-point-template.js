@@ -3,6 +3,8 @@ import { createPointTypesTemplate } from './create-point-types-template';
 import { createOffersTemplate } from './create-offers-template';
 import { createPicturesTemplate } from './create-pictures-template';
 import { createDestinationsTemplate } from './create-destinations-template';
+import EditPointMode from './edit-point-mode';
+import { createResetButtonTemplate } from './create-reset-button-template';
 
 /**
  * Creates edit event template
@@ -10,7 +12,7 @@ import { createDestinationsTemplate } from './create-destinations-template';
  * @returns {String} template
  */
 const createEditPointTemplate = (state) => {
-  const {type, dateFrom, dateTo, offers, pointTypes,
+  const {type, dateFrom, dateTo, offers, pointTypes, isEditPoint, mode,
     bestPrice, currentDestination, allDestinations, filteredOffers} = state;
   const eventStartTime = formatDate(dateFrom, 'DD/MM/YY HH:mm');
   const eventEndTime = formatDate(dateTo, 'DD/MM/YY HH:mm');
@@ -37,7 +39,8 @@ const createEditPointTemplate = (state) => {
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">${type}</label>
           <input class="event__input  event__input--destination" id="event-destination-1"
-            type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
+            type="text" name="event-destination" required
+            value="${currentDestination ? currentDestination.name : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${createDestinationsTemplate(allDestinations)}
           </datalist>
@@ -46,11 +49,11 @@ const createEditPointTemplate = (state) => {
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
           <input class="event__input  event__input--time" id="event-start-time-1"
-            type="text" name="event-start-time" value="${eventStartTime}">
+            type="text" required name="event-start-time" value="${eventStartTime}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
           <input class="event__input  event__input--time" id="event-end-time-1"
-            type="text" name="event-end-time" value="${eventEndTime}">
+            type="text" required name="event-end-time" value="${eventEndTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -59,14 +62,17 @@ const createEditPointTemplate = (state) => {
             &euro;
           </label>
           <input class="event__input  event__input--price" id="event-price-1"
-            type="text" name="event-price" value="${bestPrice}">
+            type="number" min="0" required name="event-price" value="${bestPrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">
+          ${mode === EditPointMode.SAVING ? 'Saving...' : 'Save'}
+          </button>
+          ${createResetButtonTemplate(isEditPoint, mode)}
+        ${isEditPoint ? `
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>` : ''}
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -74,12 +80,12 @@ const createEditPointTemplate = (state) => {
 
           <div class="event__available-offers">${createOffersTemplate(offers, filteredOffers)}</div>
         </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${currentDestination.description}</p>
-          ${createPicturesTemplate(currentDestination.pictures)}
-        </section>
+    ${currentDestination ? `
+      <section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${currentDestination.description}</p>
+        ${createPicturesTemplate(currentDestination.pictures)}
+      </section>` : ''}
       </section>
     </form>
   </li>`;

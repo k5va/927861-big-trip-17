@@ -1,11 +1,7 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { createFiltersTemplate } from './create-filters-template';
 
-export default class FiltersView extends AbstractView {
-  #filters = null;
-  #activeFilter = null;
-  #disabled = null;
-  #filtersForm = null;
+export default class FiltersView extends AbstractStatefulView {
 
   /**
    * Creates new instance of view
@@ -16,10 +12,7 @@ export default class FiltersView extends AbstractView {
   constructor(activeFilter, filters, disabled) {
     super();
 
-    this.#filters = filters;
-    this.#activeFilter = activeFilter;
-    this.#disabled = disabled;
-    this.#filtersForm = this.element.querySelector('.trip-filters');
+    this._state = {activeFilter, filters, disabled};
   }
 
   /**
@@ -27,7 +20,7 @@ export default class FiltersView extends AbstractView {
    * @returns {String} - view's template
    */
   get template() {
-    return createFiltersTemplate(this.#activeFilter, this.#filters, this.#disabled);
+    return createFiltersTemplate(this._state);
   }
 
   /**
@@ -36,7 +29,7 @@ export default class FiltersView extends AbstractView {
    */
   setChangeHandler(handler) {
     this._callback.change = handler;
-    this.#filtersForm.addEventListener('change', this.#changeHandler);
+    this.element.querySelector('.trip-filters').addEventListener('change', this.#changeHandler);
   }
 
   /**
@@ -46,7 +39,15 @@ export default class FiltersView extends AbstractView {
   #changeHandler = (evt) => {
     evt.preventDefault();
     if (evt.target.classList.contains('trip-filters__filter-input')) {
+      this._setState({activeFilter: evt.target.value});
       this._callback.change?.(evt.target.value);
     }
+  };
+
+  /**
+   * Restores all handlers
+   */
+  _restoreHandlers = () => {
+    this.setChangeHandler(this._callback.change);
   };
 }

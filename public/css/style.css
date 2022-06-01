@@ -517,6 +517,8 @@ main {
     background-repeat: no-repeat;
     -webkit-transform: translateY(-50%);
             transform: translateY(-50%); }
+  .event__type-label::first-letter {
+    text-transform: capitalize; }
   .event__type-label--taxi::before {
     background-image: url("../img/icons/taxi.png"); }
   .event__type-label--bus::before {
@@ -669,6 +671,10 @@ main {
     text-align: center; }
   .event__input--price {
     width: 66px; }
+
+.event__input:invalid {
+  border: 1px solid red;
+}
 
 .event__save-btn {
   margin-right: 18px; }
