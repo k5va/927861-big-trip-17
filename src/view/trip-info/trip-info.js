@@ -1,11 +1,13 @@
 import AbstractView from '../../framework/view/abstract-view';
 import { createTripInfoTemplate } from './create-trip-info-template';
 
+const DEFAULT_COST = 0;
+
 export default class TripInfoView extends AbstractView {
   #destinations = [];
   #startDate = null;
   #endDate = null;
-  #cost = 0;
+  #cost = DEFAULT_COST;
 
   /**
    * Creates new instance of view

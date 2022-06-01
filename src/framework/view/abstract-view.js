@@ -8,6 +8,9 @@ const SHAKE_CLASS_NAME = 'shake';
 /** @const {number} Время анимации в миллисекундах */
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
+const UI_BLOCKER_LOWER_LIMIT = 0;
+const UI_BLOCKER_UPPER_LIMIT = 0;
+
 /**
  * Абстрактный класс представления
  */
@@ -18,7 +21,7 @@ export default class AbstractView {
   /** @type {Object} Объект с колбэками. Может использоваться для хранения обработчиков событий */
   _callback = {};
 
-  #uiBlocker = new UiBlocker(0, 0);
+  #uiBlocker = new UiBlocker(UI_BLOCKER_LOWER_LIMIT, UI_BLOCKER_UPPER_LIMIT);
 
   constructor() {
     if (new.target === AbstractView) {
