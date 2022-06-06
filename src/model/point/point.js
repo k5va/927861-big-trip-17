@@ -13,7 +13,7 @@ export default class Point {
     this.dateTo = new Date(data['date_to']);
     this.bestPrice = Number(data['base_price']);
     this.isFavorite = Boolean(data['is_favorite']);
-    this.offers = data['offers'] ? data['offers'].map((offer) => String(offer['id'])) : [];
+    this.offers = data['offers'] ? data['offers'].map(String) : [];
     this.destination = data['destination']?.['name'];
   }
 

@@ -1,45 +1,74 @@
-import { generateOffers } from '../mock/generate-offers';
-import { generateDestinations } from '../mock/generate-destinations';
-import { generatePoints } from '../mock/generate-points';
-import { Offer, Point } from '../model';
+import { Destination, Offer, Point } from '../model';
 import {nanoid} from 'nanoid';
+import ApiService from '../framework/api-service';
 
 const DATA_LOAD_DELAY = 2000;
+const END_POINT = 'https://17.ecmascript.pages.academy/big-trip';
+const AUTH_TOKEN = 'Basic eo0w5dasdqw122a';
+const HTTP_METHOD = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+};
 
-export default class API {
+export default class API extends ApiService {
 
   static #instance = null;
 
+  /**
+   * Creates new instance of API
+   */
   constructor() {
     if (API.#instance) {
       return API.#instance;
     }
 
+    super(END_POINT, AUTH_TOKEN);
     API.#instance = this;
   }
 
+  /**
+   * Returns API instance (singleton)
+   * @returns {API} - API instance
+   */
   static getInstance() {
     return new API();
   }
 
+  /**
+   * Loads points from remote server
+   * @returns {Promise<Array<Point>>} - points
+   */
   async loadPoints() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => reject(Point.parseAll(generatePoints())), DATA_LOAD_DELAY);
-    });
+    const data = await this._load({url: 'points'});
+    const jsonData = await ApiService.parseResponse(data);
+    return Point.parseAll(jsonData);
   }
 
+  /**
+   * Loads offers from remote server
+   * @returns {Promise<*>} - offers
+   */
   async loadOffers() {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(Offer.parseAll(generateOffers())), DATA_LOAD_DELAY);
-    });
+    const data = await this._load({url: 'offers'});
+    const jsonData = await ApiService.parseResponse(data);
+    return Offer.parseAll(jsonData);
   }
 
+  /**
+   * Loads destinations from remote server
+   * @returns {Promise<Array<Destination>>} - destinations
+   */
   async loadDestinations() {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(generateDestinations()), DATA_LOAD_DELAY);
-    });
+    const data = await this._load({url: 'destinations'});
+    const jsonData = await ApiService.parseResponse(data);
+    return Destination.parseAll(jsonData);
   }
 
+  /**
+   * Loads all data from remote server
+   * @returns {Promise<*>} - data
+   */
   async loadData() {
     return Promise.all([this.loadPoints(), this.loadOffers(), this.loadDestinations()])
       .then(([points, offers, destinations]) => ({points, offers, destinations}));
