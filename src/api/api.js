@@ -22,42 +22,42 @@ export default class API {
     return new API();
   }
 
-  loadPoints() {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(Point.parseAll(generatePoints())), DATA_LOAD_DELAY);
+  async loadPoints() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => reject(Point.parseAll(generatePoints())), DATA_LOAD_DELAY);
     });
   }
 
-  loadOffers() {
+  async loadOffers() {
     return new Promise((resolve) => {
       setTimeout(() => resolve(Offer.parseAll(generateOffers())), DATA_LOAD_DELAY);
     });
   }
 
-  loadDestinations() {
+  async loadDestinations() {
     return new Promise((resolve) => {
       setTimeout(() => resolve(generateDestinations()), DATA_LOAD_DELAY);
     });
   }
 
-  loadData() {
+  async loadData() {
     return Promise.all([this.loadPoints(), this.loadOffers(), this.loadDestinations()])
       .then(([points, offers, destinations]) => ({points, offers, destinations}));
   }
 
-  addPoint(point) {
+  async addPoint(point) {
     return new Promise((resolve) => {
       setTimeout(() => resolve({...point, id: nanoid()}), DATA_LOAD_DELAY);
     });
   }
 
-  updatePoint(point) {
+  async updatePoint(point) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(point), DATA_LOAD_DELAY);
     });
   }
 
-  deletePoint(point) {
+  async deletePoint(point) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(point), DATA_LOAD_DELAY);
     });

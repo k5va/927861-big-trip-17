@@ -34,6 +34,11 @@ const reducer = (state = initialState, action, payload) => {
         offers: payload.offers,
         destinations: payload.destinations
       };
+    case Actions.DATA_ERROR:
+      return {
+        ...state,
+        mode: AppMode.ERROR,
+      };
     default:
       return state;
   }

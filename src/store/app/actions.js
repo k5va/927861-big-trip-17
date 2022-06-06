@@ -6,6 +6,7 @@ const Actions = {
   POINT_ADD: 'POINT_ADD',
   MODE_CHANGE: 'MODE_CHANGE',
   DATA_LOADED: 'DATA_LOADED',
+  DATA_ERROR: 'DATA_ERROR',
 };
 
 export default Actions;
