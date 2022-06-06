@@ -40,9 +40,9 @@ export default class API extends ApiService {
    * @returns {Promise<Array<Point>>} - points
    */
   async loadPoints() {
-    const data = await this._load({url: 'points'});
-    const jsonData = await ApiService.parseResponse(data);
-    return Point.parseAll(jsonData);
+    const response = await this._load({url: 'points'});
+    const data = await ApiService.parseResponse(response);
+    return Point.parseAll(data);
   }
 
   /**
@@ -50,9 +50,9 @@ export default class API extends ApiService {
    * @returns {Promise<*>} - offers
    */
   async loadOffers() {
-    const data = await this._load({url: 'offers'});
-    const jsonData = await ApiService.parseResponse(data);
-    return Offer.parseAll(jsonData);
+    const response = await this._load({url: 'offers'});
+    const data = await ApiService.parseResponse(response);
+    return Offer.parseAll(data);
   }
 
   /**
@@ -60,9 +60,9 @@ export default class API extends ApiService {
    * @returns {Promise<Array<Destination>>} - destinations
    */
   async loadDestinations() {
-    const data = await this._load({url: 'destinations'});
-    const jsonData = await ApiService.parseResponse(data);
-    return Destination.parseAll(jsonData);
+    const response = await this._load({url: 'destinations'});
+    const data = await ApiService.parseResponse(response);
+    return Destination.parseAll(data);
   }
 
   /**
@@ -80,10 +80,21 @@ export default class API extends ApiService {
     });
   }
 
+  /**
+   * Updates point on remote server
+   * @param {Point} point - point
+   * @returns {Promise<Point>} - updated point
+   */
   async updatePoint(point) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(point), DATA_LOAD_DELAY);
+    const response = await this._load({
+      url: `points/${point.id}`,
+      method: HTTP_METHOD.PUT,
+      body: JSON.stringify(point.serialize()),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
+
+    const data = await ApiService.parseResponse(response);
+    return Point.parse(data);
   }
 
   async deletePoint(point) {

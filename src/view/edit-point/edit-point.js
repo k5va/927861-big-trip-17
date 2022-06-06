@@ -9,6 +9,7 @@ import EditPointMode from './edit-point-mode';
 export default class EditPointView extends AbstractStatefulView {
   #dateFromPicker = null;
   #dateToPicker = null;
+  #point = null;
 
   /**
    * Creates an instance of view
@@ -20,6 +21,7 @@ export default class EditPointView extends AbstractStatefulView {
   constructor(point, offers, destinations, isEditPoint = true) {
     super();
 
+    this.#point = point;
     this._state = this.#mapPointToState(point, offers, destinations, isEditPoint);
     this.#setInnerHandlers();
     this.#setDatePickers();
@@ -159,17 +161,15 @@ export default class EditPointView extends AbstractStatefulView {
    * @returns {Point} point
    */
   #mapStateToPoint() {
-    const point = {...this._state};
+    this.#point.bestPrice = this._state.bestPrice;
+    this.#point.type = this._state.type;
+    this.#point.dateFrom = this._state.dateFrom;
+    this.#point.dateTo = this._state.dateTo;
+    this.#point.offers = this._state.offers;
+    this.#point.destination = this._state.destination;
+    this.#point.isFavorite = this._state.isFavorite;
 
-    delete point.allOffers;
-    delete point.pointTypes;
-    delete point.currentDestination;
-    delete point.allDestinations;
-    delete point.filterOffers;
-    delete point.isEditPoint;
-    delete point.mode;
-
-    return point;
+    return this.#point;
   }
 
   /**

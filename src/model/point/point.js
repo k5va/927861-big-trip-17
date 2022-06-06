@@ -18,6 +18,33 @@ export default class Point {
   }
 
   /**
+   * Serializes point back to server format
+   * @returns {Object}
+   */
+  serialize() {
+    const data = {
+      ...this,
+      'date_from': this.dateFrom ? this.dateFrom.toISOString() : null,
+      'date_to': this.dateTo ? this.dateTo.toISOString() : null,
+      'base_price': this.bestPrice,
+      'is_favorite': this.isFavorite,
+      'offers': this.offers.map(Number),
+      'destination': {
+        'name': this.destination,
+        'description': ' ',
+        'pictures': []
+      },
+    };
+
+    delete data.dateFrom;
+    delete data.dateTo;
+    delete data.bestPrice;
+    delete data.isFavorite;
+
+    return data;
+  }
+
+  /**
    * Creates new point from raw data
    * @param {Object} data - raw data
    * @returns {Offer} - point

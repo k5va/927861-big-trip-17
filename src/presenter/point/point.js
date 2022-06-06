@@ -114,14 +114,17 @@ export default class PointPresenter extends AbstractPresenter {
    * Save handler
    * @param {Point} point - updated point
    */
-  #saveHandler = (point) => {
+  #saveHandler = async (point) => {
     this.#editPointView.block();
-    this._api.updatePoint(point).then(() => {
+    try {
+      const updatedPoint = await this._api.updatePoint(point);
       this.#editPointView.unblock();
       this.#replaceEditToView();
       this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
-      this._appStore.dispatch(Actions.POINT_UPDATE, point);
-    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
+      this._appStore.dispatch(Actions.POINT_UPDATE, updatedPoint);
+    } catch (err) {
+      this.#editPointView.shake(() => this.#editPointView.unblock());
+    }
   };
 
   /**
@@ -147,8 +150,9 @@ export default class PointPresenter extends AbstractPresenter {
    * Add/remove to favorites handler
    * @param {Point} point - updated point
    */
-  #favoritesHandler = (point) => {
-    this._appStore.dispatch(Actions.POINT_UPDATE, {...point});
+  #favoritesHandler = async (point) => {
+    const updatedPoint = await this._api.updatePoint(point);
+    this._appStore.dispatch(Actions.POINT_UPDATE, updatedPoint);
   };
 
   /**
