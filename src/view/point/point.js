@@ -70,6 +70,7 @@ export default class PointView extends AbstractStatefulView {
   #mapPointToState(point, offers) {
     return {
       ...point,
+      destination: point.destination,
       filteredOffers: filterOffers(offers, point.type, point.offers),
     };
   }

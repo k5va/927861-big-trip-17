@@ -1,6 +1,7 @@
 import { PointType } from '../../const';
 
 export default class Point {
+  #destination = null;
 
   /**
    * Creates new instance of point
@@ -14,7 +15,21 @@ export default class Point {
     this.bestPrice = Number(data['base_price']);
     this.isFavorite = Boolean(data['is_favorite']);
     this.offers = data['offers'] ? data['offers'].map(String) : [];
-    this.destination = data['destination']?.['name'];
+    this.#destination = data['destination'];
+  }
+
+  /**
+   * destination getter
+   */
+  get destination() {
+    return this.#destination?.['name'];
+  }
+
+  /**
+   * destination setter
+   */
+  set destination(destination) {
+    this.#destination = destination;
   }
 
   /**
@@ -29,11 +44,7 @@ export default class Point {
       'base_price': this.bestPrice,
       'is_favorite': this.isFavorite,
       'offers': this.offers.map(Number),
-      'destination': {
-        'name': this.destination,
-        'description': ' ',
-        'pictures': []
-      },
+      'destination': this.#destination,
     };
 
     delete data.dateFrom;

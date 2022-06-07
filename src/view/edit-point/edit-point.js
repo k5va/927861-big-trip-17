@@ -166,7 +166,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.#point.dateFrom = this._state.dateFrom;
     this.#point.dateTo = this._state.dateTo;
     this.#point.offers = this._state.offers;
-    this.#point.destination = this._state.destination;
+    this.#point.destination = this._state.currentDestination;
     this.#point.isFavorite = this._state.isFavorite;
 
     return this.#point;
