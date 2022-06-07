@@ -1,5 +1,4 @@
 import { Destination, Offer, Point } from '../model';
-import {nanoid} from 'nanoid';
 import ApiService from '../framework/api-service';
 
 const DATA_LOAD_DELAY = 2000;
@@ -74,10 +73,21 @@ export default class API extends ApiService {
       .then(([points, offers, destinations]) => ({points, offers, destinations}));
   }
 
+  /**
+   * Adds new point to remote server
+   * @param {Point} point - new point
+   * @returns {Promise<Point>} - created point from remote server
+   */
   async addPoint(point) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve({...point, id: nanoid()}), DATA_LOAD_DELAY);
+    const response = await this._load({
+      url: 'points',
+      method: HTTP_METHOD.POST,
+      body: JSON.stringify(point.serialize()),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
+
+    const data = await ApiService.parseResponse(response);
+    return Point.parse(data);
   }
 
   /**

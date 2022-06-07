@@ -50,14 +50,17 @@ export default class AddPointPresenter extends AbstractPresenter {
    * Save handler
    * @param {Point} point - updated point
    */
-  #saveHandler = (point) => {
+  #saveHandler = async (point) => {
     this.#editPointView.block();
-    this._api.addPoint(point).then(() => {
+    try {
+      const createdPoint = await this._api.addPoint(point);
       this.#editPointView.unblock();
-      this._appStore.dispatch(Actions.POINT_ADD, point);
+      this._appStore.dispatch(Actions.POINT_ADD, createdPoint);
       remove(this.#editPointView);
       this._appStore.dispatch(Actions.MODE_CHANGE, AppMode.READY);
-    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
+    } catch(err) {
+      this.#editPointView.shake(() => this.#editPointView.unblock());
+    }
   };
 
   /**
