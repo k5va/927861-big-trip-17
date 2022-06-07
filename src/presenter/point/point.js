@@ -131,12 +131,15 @@ export default class PointPresenter extends AbstractPresenter {
    * Delete handler
    * @param {Point} point - point
    */
-  #deleteHandler = (point) => {
+  #deleteHandler = async (point) => {
     this.#editPointView.block();
-    this._api.deletePoint(point).then(() => {
+    try {
+      await this._api.deletePoint(point);
       this.#editPointView.unblock();
       this._appStore.dispatch(Actions.POINT_DELETE, point.id);
-    }).catch(() => this.#editPointView.shake(() => this.#editPointView.unblock()));
+    } catch(err) {
+      this.#editPointView.shake(() => this.#editPointView.unblock());
+    }
   };
 
   /**

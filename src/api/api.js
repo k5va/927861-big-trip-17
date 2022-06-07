@@ -1,13 +1,13 @@
 import { Destination, Offer, Point } from '../model';
 import ApiService from '../framework/api-service';
 
-const DATA_LOAD_DELAY = 2000;
 const END_POINT = 'https://17.ecmascript.pages.academy/big-trip';
 const AUTH_TOKEN = 'Basic eo0w5dasdqw122a';
 const HTTP_METHOD = {
   GET: 'GET',
   POST: 'POST',
   PUT: 'PUT',
+  DELETE: 'DELETE',
 };
 
 export default class API extends ApiService {
@@ -107,9 +107,19 @@ export default class API extends ApiService {
     return Point.parse(data);
   }
 
+  /**
+   * Deletes point
+   * @param {Point} point - point to be deleted
+   * @returns {Promise<Point>} - deleted point
+   */
   async deletePoint(point) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(point), DATA_LOAD_DELAY);
+    await this._load({
+      url: `points/${point.id}`,
+      method: HTTP_METHOD.DELETE,
+      body: JSON.stringify(point.serialize()),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
+
+    return point;
   }
 }
