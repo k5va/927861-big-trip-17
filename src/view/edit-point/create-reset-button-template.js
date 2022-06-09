@@ -12,7 +12,9 @@ const createResetButtonTemplate = (isEditPoint, mode) => {
   }
 
   return `
-    <button class="event__reset-btn" type="reset">
+    <button class="event__reset-btn" type="reset"
+      ${mode !== EditPointMode.NORMAL ? 'disabled' : ''}
+    >
       ${mode === EditPointMode.DELETING ? 'Deleting...' : 'Delete'}
     </button>`;
 };
