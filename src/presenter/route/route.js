@@ -105,6 +105,14 @@ export default class RoutePresenter extends AbstractPresenter {
   }
 
   /**
+   * Renders error message
+   */
+  #renderError() {
+    this.#noPointsView = new NoPointsView(NoPointsMessage.ERROR);
+    render(this.#noPointsView, this.#routeContainer);
+  }
+
+  /**
    * Clears points list and destroys all point presenters
    */
   #clearRoute() {
@@ -133,6 +141,10 @@ export default class RoutePresenter extends AbstractPresenter {
         this.#addPointButtonView.enable();
         this.#clearRoute();
         this.#renderRoute();
+        break;
+      case Actions.DATA_ERROR:
+        this.#clearRoute();
+        this.#renderError();
         break;
       case Actions.MODE_CHANGE:
         this.#handleChangeMode(payload);

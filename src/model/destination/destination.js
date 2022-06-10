@@ -7,9 +7,7 @@ export default class Destination {
   constructor(data) {
     this.name = data['name'];
     this.description = data['description'];
-    this.pictures = data['pictures'] ?
-      data['pictures'].map((picture) => ({src: picture['src'], description: picture['description']})) :
-      [];
+    this.pictures = data['pictures'];
   }
 
   /**

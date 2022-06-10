@@ -1,65 +1,125 @@
-import { generateOffers } from '../mock/generate-offers';
-import { generateDestinations } from '../mock/generate-destinations';
-import { generatePoints } from '../mock/generate-points';
-import { Offer, Point } from '../model';
-import {nanoid} from 'nanoid';
+import { Destination, Offer, Point } from '../model';
+import ApiService from '../framework/api-service';
 
-const DATA_LOAD_DELAY = 2000;
+const END_POINT = 'https://17.ecmascript.pages.academy/big-trip';
+const AUTH_TOKEN = 'Basic eo0w5dasdqw122a';
+const HTTP_METHOD = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
 
-export default class API {
+export default class API extends ApiService {
 
   static #instance = null;
 
+  /**
+   * Creates new instance of API
+   */
   constructor() {
     if (API.#instance) {
       return API.#instance;
     }
 
+    super(END_POINT, AUTH_TOKEN);
     API.#instance = this;
   }
 
+  /**
+   * Returns API instance (singleton)
+   * @returns {API} - API instance
+   */
   static getInstance() {
     return new API();
   }
 
-  loadPoints() {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(Point.parseAll(generatePoints())), DATA_LOAD_DELAY);
-    });
+  /**
+   * Loads points from remote server
+   * @returns {Promise<Array<Point>>} - points
+   */
+  async loadPoints() {
+    const response = await this._load({url: 'points'});
+    const data = await ApiService.parseResponse(response);
+    return Point.parseAll(data);
   }
 
-  loadOffers() {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(Offer.parseAll(generateOffers())), DATA_LOAD_DELAY);
-    });
+  /**
+   * Loads offers from remote server
+   * @returns {Promise<*>} - offers
+   */
+  async loadOffers() {
+    const response = await this._load({url: 'offers'});
+    const data = await ApiService.parseResponse(response);
+    return Offer.parseAll(data);
   }
 
-  loadDestinations() {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(generateDestinations()), DATA_LOAD_DELAY);
-    });
+  /**
+   * Loads destinations from remote server
+   * @returns {Promise<Array<Destination>>} - destinations
+   */
+  async loadDestinations() {
+    const response = await this._load({url: 'destinations'});
+    const data = await ApiService.parseResponse(response);
+    return Destination.parseAll(data);
   }
 
-  loadData() {
+  /**
+   * Loads all data from remote server
+   * @returns {Promise<*>} - data
+   */
+  async loadData() {
     return Promise.all([this.loadPoints(), this.loadOffers(), this.loadDestinations()])
       .then(([points, offers, destinations]) => ({points, offers, destinations}));
   }
 
-  addPoint(point) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve({...point, id: nanoid()}), DATA_LOAD_DELAY);
+  /**
+   * Adds new point to remote server
+   * @param {Point} point - new point
+   * @returns {Promise<Point>} - created point from remote server
+   */
+  async addPoint(point) {
+    const response = await this._load({
+      url: 'points',
+      method: HTTP_METHOD.POST,
+      body: JSON.stringify(point.serialize()),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
+
+    const data = await ApiService.parseResponse(response);
+    return Point.parse(data);
   }
 
-  updatePoint(point) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(point), DATA_LOAD_DELAY);
+  /**
+   * Updates point on remote server
+   * @param {Point} point - point
+   * @returns {Promise<Point>} - updated point
+   */
+  async updatePoint(point) {
+    const response = await this._load({
+      url: `points/${point.id}`,
+      method: HTTP_METHOD.PUT,
+      body: JSON.stringify(point.serialize()),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
+
+    const data = await ApiService.parseResponse(response);
+    return Point.parse(data);
   }
 
-  deletePoint(point) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(point), DATA_LOAD_DELAY);
+  /**
+   * Deletes point
+   * @param {Point} point - point to be deleted
+   * @returns {Promise<Point>} - deleted point
+   */
+  async deletePoint(point) {
+    await this._load({
+      url: `points/${point.id}`,
+      method: HTTP_METHOD.DELETE,
+      body: JSON.stringify(point.serialize()),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
+
+    return point;
   }
 }

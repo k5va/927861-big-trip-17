@@ -3,6 +3,7 @@ import { createPointTemplate } from './create-point-template';
 import { filterOffers } from '../../utils';
 
 export default class PointView extends AbstractStatefulView {
+  #point = null;
 
   /**
    * Creates an instance of point view
@@ -12,6 +13,7 @@ export default class PointView extends AbstractStatefulView {
   constructor(point, offers) {
     super();
 
+    this.#point = point;
     this._state = this.#mapPointToState(point, offers);
   }
 
@@ -68,6 +70,7 @@ export default class PointView extends AbstractStatefulView {
   #mapPointToState(point, offers) {
     return {
       ...point,
+      destination: point.destination,
       filteredOffers: filterOffers(offers, point.type, point.offers),
     };
   }
@@ -77,11 +80,9 @@ export default class PointView extends AbstractStatefulView {
    * @returns {Point} point
    */
   #mapStateToPoint() {
-    const point = {...this._state};
+    this.#point.isFavorite = this._state.isFavorite;
 
-    delete point.filterOffers;
-
-    return point;
+    return this.#point;
   }
 
   /**

@@ -65,7 +65,9 @@ const createEditPointTemplate = (state) => {
             type="number" min="0" required name="event-price" value="${bestPrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">
+        <button class="event__save-btn  btn  btn--blue" type="submit"
+          ${mode !== EditPointMode.NORMAL ? 'disabled' : ''}
+        >
           ${mode === EditPointMode.SAVING ? 'Saving...' : 'Save'}
           </button>
           ${createResetButtonTemplate(isEditPoint, mode)}
