@@ -5,7 +5,6 @@ export default class SortView extends AbstractView {
   #sortings = null;
   #disabled = null;
   #activeSorting = null;
-  #sortingsForm = null;
 
   /**
    * Creates new instance of view
