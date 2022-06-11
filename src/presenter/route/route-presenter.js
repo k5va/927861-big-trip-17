@@ -2,7 +2,8 @@ import { remove, render } from '../../framework/render';
 import { NoPointsView, PointListView, AddPointButtonView } from '../../view';
 import { AppMode, DEFAULT_FILTER, NoPointsMessage } from '../../const';
 import { AddPointPresenter, FilterPresenter, PointPresenter,
-  SortingPresenter, AbstractPresenter, TripInfoPresenter } from '../../presenter';
+  SortingPresenter, TripInfoPresenter } from '../../presenter';
+import AbstractPresenter from '../presenter/abstract-presenter';
 import { filterPoints, sortPoints } from '../../utils';
 import { Actions } from '../../store';
 

@@ -1,7 +1,7 @@
 import { remove, render } from '../../framework/render';
 import { Sorting, DISABLED_SORTINGS } from '../../const';
 import { SortView } from '../../view';
-import { AbstractPresenter } from '../../presenter';
+import AbstractPresenter from '../presenter/abstract-presenter';
 import { Actions } from '../../store';
 
 export default class SortingPresenter extends AbstractPresenter {

@@ -1,7 +1,7 @@
 import { render } from '../../framework/render';
 import { FiltersView } from '../../view';
 import { AppMode, Filter, PointFilter } from '../../const';
-import { AbstractPresenter } from '..';
+import AbstractPresenter from '../presenter/abstract-presenter';
 import { Actions } from '../../store';
 
 export default class FilterPresenter extends AbstractPresenter {

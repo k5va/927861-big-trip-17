@@ -1,6 +1,6 @@
 import { render, replace } from '../../framework/render';
 import { TripInfoView } from '../../view';
-import { AbstractPresenter } from '..';
+import AbstractPresenter from '../presenter/abstract-presenter';
 import { Actions } from '../../store';
 import { filterOffers, sortPoints } from '../../utils';
 
