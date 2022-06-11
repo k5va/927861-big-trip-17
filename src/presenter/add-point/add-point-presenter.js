@@ -1,6 +1,6 @@
 import { EditPointView } from '../../view';
 import { render, remove, RenderPosition } from '../../framework/render';
-import { AbstractPresenter } from '../../presenter';
+import { AbstractPresenter } from '..';
 import { AppMode } from '../../const';
 import { Point } from '../../model';
 import { Actions } from '../../store';
